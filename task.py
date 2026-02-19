@@ -1,12 +1,11 @@
-import uuid
+from dataclasses import dataclass, asdict
 
 
+@dataclass
 class Task():
-
-    def __init__(self,pos:int, title:str, done: bool=False):
-        self.id = pos
-        self.title = title
-        self.done = done
+    id: int
+    title: str
+    done: bool = False
 
     def mark_done(self):
         self.done = True
@@ -15,17 +14,11 @@ class Task():
         return(self.title + " : " + self.done)
 
     def to_dict(self)->dict:
-        return{
-            "id":self.id,
-            "title":self.title,
-            "done":self.done
-        }
+        #asdict transform dataclass into dict
+        return{asdict(self)}
 
     @classmethod
     def from_dict(cls, data:dict):
-        return cls(
-            task_id=data["id"],
-            title=data["title"],
-            done=data["done"]
-        )
+        #** break dictionary in named arguments
+        return cls(**data)
 
