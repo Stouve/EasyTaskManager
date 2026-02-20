@@ -14,13 +14,28 @@ class Task():
     title: str
     done: bool = False
 
-    def mark_done(self):
+    def __post_init__(self) -> None:
+        """
+        Post initialization Validiation
+        """
+        if not isinstance(self.id, int):
+            raise TypeError("Task id must be an integer")
+        if self.id < 0:
+            raise ValueError("Task id must be greater than 0")
+        if not isinstance(self.title, str):
+            raise TypeError("Task title must be an string")
+        if not self.title.strip():
+            raise ValueError("Task title must not be empty")
+        if not isinstance(self.done, bool):
+            raise TypeError("Task done must be a boolean")
+
+    def mark_done(self) -> None:
         """
         Marks the task as done
         """
         self.done = True
 
-    def mark_undone(self):
+    def mark_undone(self) -> None:
         """
         Marks the task as undone
         """
