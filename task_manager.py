@@ -1,7 +1,7 @@
 from asyncio import tasks
 from pathlib import Path
 
-
+import task
 from task import Task
 import json
 
@@ -45,23 +45,64 @@ class TaskManager():
                 ensure_ascii=False
             )
 
-    def add_task(self, title):
-        task = Task(title)
+    def add_task(self, title)->None:
+        """
+        Add a new task
+        """
+        task_id = self._generate_next_id()
+        task = Task(task_id, title)
         self.tasks.append(task)
 
-    def list_tasks(self):
-        for task in list(self.tasks):
-            print(f"Task : {task.title}, Status : Done") if task.done else print(f"Task : {task.title}, Status : TODO")
-
-    def gest_task(self):
-
-
-    def complete_task(self):
+    def list_tasks(self)->List[Task]:
+        """
+        return all tasks
+        """
+        return self.tasks
 
 
-    def delete_task(self, pos):
+    def gest_task(self,task_id:int)->Task:
+        """
+        Return task by ID
+        """
+        for task in self.tasks:
+            if task.id == task_id:
+                return task
+
+        return  None
+
+    def complete_task(self,task_id:int)->bool:
+        """
+        Complete task
+        """
+        task=self.gest_task(task_id)
+
+        if not task:
+            return False
+
+        task.mark_done()
+        self._save_tasks()
+        return True
+
+    def delete_task(self, task_id:int)->bool:
+        """
+        Delete task by ID
+        """
+        task=self.gest_task(task_id)
+
+        if not task:
+            return False
+
+        self.tasks.remove(task)
+        return True
+
         print(f"Deleting Task : {self.tasks[pos]}")
 
-    def _generate_next_id(self):
+    def _generate_next_id(self)-> int:
+        """
+        Generate next task ID
+        """
+        if not self.tasks:
+            return 1
 
+        return max(task.id for task in self.tasks) + 1
 
