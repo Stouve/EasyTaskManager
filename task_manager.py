@@ -1,9 +1,8 @@
-from asyncio import tasks
-from pathlib import Path
-
-import task
-from task import Task
 import json
+from pathlib import Path
+from typing import List, Optional
+
+from task import Task
 
 
 class TaskManager():
@@ -17,7 +16,6 @@ class TaskManager():
         self._load_tasks()
 
 
-
     def _load_tasks(self)->None:
         """
         Load tasks from json file
@@ -28,7 +26,7 @@ class TaskManager():
         try:
             with open(self.file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-
+                #print(f"TEST DATA : {data}")
                 self.tasks = [Task.from_dict(item) for item in data]
         except json.decoder.JSONDecodeError:
             self.tasks = []
@@ -39,19 +37,21 @@ class TaskManager():
         """
         with open(self.file_path, "w", encoding="utf-8") as f:
             json.dump(
-                [Task.to_dict() for task in self.tasks],
+                [task.to_dict() for task in self.tasks],
                 f,
                 indent=4,
                 ensure_ascii=False
             )
 
-    def add_task(self, title)->None:
+    def add_task(self, title)->"Task":
         """
         Add a new task
         """
         task_id = self._generate_next_id()
         task = Task(task_id, title)
         self.tasks.append(task)
+        self._save_tasks()
+        return task
 
     def list_tasks(self)->List[Task]:
         """
@@ -60,7 +60,7 @@ class TaskManager():
         return self.tasks
 
 
-    def gest_task(self,task_id:int)->Task:
+    def gest_task(self,task_id:int)->Optional[Task]:
         """
         Return task by ID
         """
@@ -83,6 +83,19 @@ class TaskManager():
         self._save_tasks()
         return True
 
+    def reset_task(self,task_id:int)->bool:
+        """
+        Complete task
+        """
+        task=self.gest_task(task_id)
+
+        if not task:
+            return False
+
+        task.mark_undone()
+        self._save_tasks()
+        return True
+
     def delete_task(self, task_id:int)->bool:
         """
         Delete task by ID
@@ -93,6 +106,7 @@ class TaskManager():
             return False
 
         self.tasks.remove(task)
+        self._save_tasks()
         return True
 
         print(f"Deleting Task : {self.tasks[pos]}")
