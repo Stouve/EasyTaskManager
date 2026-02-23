@@ -46,10 +46,10 @@ class Task():
         Transforms the task to a serializable dict JSON
         """
         #asdict transform dataclass into dict
-        return{asdict(self)}
+        return asdict(self)
 
     @classmethod
-    def from_dict(cls, data:dict)->Task:
+    def from_dict(cls, data:dict)->"Task":
         """
         Create the task from a serializable dict JSON
         Args:
