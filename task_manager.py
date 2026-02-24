@@ -18,7 +18,7 @@ class TaskManager():
 
     def _load_tasks(self)->None:
         """
-        Load tasks from json file
+        Load tasks from json file<
         """
         if not self.file_path.exists():
             self.tasks = []
