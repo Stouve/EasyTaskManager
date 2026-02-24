@@ -1,6 +1,6 @@
 import sys
 
-from task_manager import TaskManager
+from core.task_manager import TaskManager
 
 manager=TaskManager()
 
