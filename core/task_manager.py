@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import List, Optional
 
-from core.task import Task
+from core.models import Task
 
 
 class TaskManager():
