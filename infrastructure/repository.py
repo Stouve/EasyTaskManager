@@ -1,4 +1,4 @@
-from core.models import Task, TaskStatus
+from infrastructure.database import get_connection
 
 
 #class SQLiteTaskRepository:
