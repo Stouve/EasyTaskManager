@@ -5,7 +5,7 @@ from typing import List, Optional
 from core.models import Task
 
 
-class TaskManager():
+class TaskService():
     """
     Handle operations and tasks persistence
     """
@@ -13,16 +13,16 @@ class TaskManager():
     def __init__(self, repository):
         self.repository = repository
 
-    def createTask(self, title: str, description : str | None):
+    def create_task(self, title: str, description : str | None):
         if not title:
             raise ValueError("Task title cannot be empty")
         return self.repository.add(title, description)
 
-    def listTasks(self):
+    def list_tasks(self):
         return self.repository.get_all_tasks()
 
-    def completeTask(self, task_id: int):
+    def complete_task(self, task_id: int):
         return self.repository.mark_done(task_id)
 
-    def deleteTask(self, task_id: int):
+    def delete_task(self, task_id: int):
         return self.repository.delete(task_id)
