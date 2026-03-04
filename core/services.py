@@ -1,9 +1,5 @@
-import json
-from pathlib import Path
-from typing import List, Optional
-
 from core.models import Task
-
+from infrastructure.database import get_connection
 
 class TaskService():
     """
@@ -26,3 +22,4 @@ class TaskService():
 
     def delete_task(self, task_id: int):
         return self.repository.delete(task_id)
+
