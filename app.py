@@ -1,45 +1,39 @@
-import sys
+from infrastructure.database import init_db
+from core.services import TaskService
 
-from core.services import TaskManager
+def main():
 
-manager=TaskManager()
+        init_db()
+        manager = TaskService()
 
-command = sys.argv[1]
+        while True:
+            print("\n1. Add task")
+            print("2. List tasks")
+            print("3. Complete task")
+            print("4. Remove task")
+            print("5. Exit")
 
-if command =="add":
-    title=sys.argv[2]
-    task=manager.add_task(title)
-    print(f"Task added: {task}")
+            choice=input("Enter your choice:")
+            if choice=="1":
+                name=input("Title:")
+                desc=input("Description:")
+                manager.create_task(name, desc)
 
-elif command =="list":
-    list=manager.list_tasks()
-    for task in list:
-        print(task)
+            elif choice=="2":
+                tasks=manager.list_tasks()
+                for element in tasks:
+                    print(element)
 
-elif command =="done":
-    task_id=int(sys.argv[2])
-    if manager.complete_task(task_id):
-        print(f"Task {task_id} | Done")
-    else:
-        print(f"Task {task_id} | NOT FOUND")
+            elif choice=="3":
+                id=int(input("Task ID:"))
+                manager.complete_task(id)
 
-elif command =="undone":
-    task_id=int(sys.argv[2])
-    if manager.reset_task(task_id):
-        print(f"Task {task_id} | reset to Undone")
-    else:
-        print(f"Task {task_id} | NOT FOUND")
+            elif choice=="4":
+                id=int(input("Task ID:"))
+                manager.delete_task(id)
 
-elif command =="delete":
-    task_id=int(sys.argv[2])
-    if manager.delete_task(task_id):
-        print(f"Task {task_id} | DELETED")
-    else:
-        print(f"Task {task_id} | NOT FOUND")
-else:
-    print(f"Unknown command, please use : ")
-    print(f"-python app.py list")
-    print(f"-python app.py add $title")
-    print(f"-python app.py done $id")
-    print(f"-python app.py undone $id")
-    print(f"-python app.py delete $id")
+            elif choice=="5":
+                break
+
+if __name__ == '__main__':
+    main()
