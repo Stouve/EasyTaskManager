@@ -15,7 +15,7 @@ class SQLiteTaskRepository:
         conn.commit()
         conn.close()
 
-     def get_all_tasks(self):
+    def get_all_tasks(self):
 
          conn=get_connection()
          cursor=conn.cursor()
@@ -34,7 +34,8 @@ class SQLiteTaskRepository:
         conn.commit()
         conn.close()
 
-def delete(self,task_id):
+    def delete(self,task_id):
+
         conn=get_connection()
         cursor=conn.cursor()
         cursor.execute("DELETE FROM tasks WHERE id=?",(task_id,))

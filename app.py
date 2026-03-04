@@ -1,10 +1,13 @@
 from infrastructure.database import init_db
+1from infrastructure.repository import SQLiteTaskRepository
 from core.services import TaskService
 
 def main():
 
         init_db()
-        manager = TaskService()
+        repository=SQLiteTaskRepository()
+
+        manager = TaskService(repository)
 
         while True:
             print("\n1. Add task")

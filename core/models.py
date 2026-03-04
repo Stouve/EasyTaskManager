@@ -7,8 +7,8 @@ class TaskStatus(str, Enum):
     PENDING = "pending"
     DONE = "done"
 
-@dataclass
-class Task(slots=True):
+@dataclass(slots=True)
+class Task:
     """
     This represents a task
 

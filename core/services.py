@@ -1,7 +1,7 @@
 from core.models import Task
 from infrastructure.database import get_connection
 
-class TaskService():
+class TaskService:
     """
     Handle operations and tasks persistence
     """
