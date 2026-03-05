@@ -48,16 +48,20 @@ class SQLiteTaskRepository:
 
          return [self._row_to_task(row) for row in tasks]
 
-    def mark_done(self,task_id):
+    # -------------------------------
+    # UPDATE TASK
+    # -------------------------------
+    def mark_done(self,task_id:int):
 
         conn=get_connection()
         cursor=conn.cursor()
-        cursor.execute("UPDATE tasks SET status = 'done' WHERE id=?",
-                       (task_id,))
+        cursor.execute(
+            "UPDATE tasks SET status = ? WHERE id=?",
+                       (TaskStatus.DONE.value,task_id,))
         conn.commit()
         conn.close()
 
-    def delete(self,task_id):
+    def delete(self,task_id:int) -> None:
 
         conn=get_connection()
         cursor=conn.cursor()
