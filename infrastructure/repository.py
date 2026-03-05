@@ -1,19 +1,39 @@
+from datetime import datetime
+from typing import Optional
+
 from infrastructure.database import get_connection
-from core.models import Task
+from core.models import Task, TaskStatus
 
 
 class SQLiteTaskRepository:
 
-    def add(self,title:str, description:str):
+    #-------------------------------
+    #CREATE
+    #-------------------------------
+    def add(self,title:str, description:Optional[str])->Task:
 
         conn=get_connection()
         cursor=conn.cursor()
 
-        cursor.execute("INSERT INTO tasks (title,description) VALUES (?,?)",
-                       (title,description)
+        now=datetime.now(datetime.UTC).isoformat()
+
+        cursor.execute("INSERT INTO tasks (title,description,status,created_at) VALUES (?,?,?,?)",
+                       (title,description,TaskStatus.PENDING.value,now),
                        )
+
+        #get the id of the last id generated
+        task_id=cursor.lastrowid
+
         conn.commit()
         conn.close()
+
+        return Task(
+            id=task_id,
+            title=title,
+            description=description,
+            status=TaskStatus.PENDING,
+            created_at=datetime.fromordinal(now),
+        )
 
     def get_all_tasks(self):
 
