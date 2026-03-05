@@ -46,7 +46,7 @@ class SQLiteTaskRepository:
          tasks=cursor.fetchall()
          conn.close()
 
-         return tasks
+         return [self._row_to_task(row) for row in tasks]
 
     def mark_done(self,task_id):
 
