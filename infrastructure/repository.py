@@ -35,7 +35,10 @@ class SQLiteTaskRepository:
             created_at=datetime.fromordinal(now),
         )
 
-    def get_all_tasks(self):
+    #-------------------------------
+    #READ ALL
+    #-------------------------------
+    def get_all_tasks(self)->list[Task]:
 
          conn=get_connection()
          cursor=conn.cursor()
@@ -61,3 +64,16 @@ class SQLiteTaskRepository:
         cursor.execute("DELETE FROM tasks WHERE id=?",(task_id,))
         conn.commit()
         conn.close()
+
+    #-------------------------------
+    #PRIVATE MAPPER
+    #-------------------------------
+    @staticmethod
+    def _row_to_task(self,row:tuple)->Task:
+        return Task(
+            id=row["id"],
+            title=row["title"],
+            description=row["description"],
+            status=TaskStatus(row["status"]),
+            created_at=datetime.fromisoformat(row["created_at"]),
+        )
