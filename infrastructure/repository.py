@@ -57,7 +57,7 @@ class SQLiteTaskRepository:
 
         if row is None:
             return None
-
+    
         return self._row_to_task(row)
 
     # -------------------------------

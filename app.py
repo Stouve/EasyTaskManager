@@ -1,5 +1,5 @@
 from infrastructure.database import init_db
-1from infrastructure.repository import SQLiteTaskRepository
+from infrastructure.repository import SQLiteTaskRepository
 from core.services import TaskService
 
 def main():
