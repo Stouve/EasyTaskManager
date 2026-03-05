@@ -48,6 +48,18 @@ class SQLiteTaskRepository:
 
          return [self._row_to_task(row) for row in tasks]
 
+    def get_by_id(self,task_id:int)->Task:
+        conn=get_connection()
+        cursor=conn.cursor()
+        cursor.execute("SELECT * FROM tasks WHERE id=?",(task_id,))
+        row=cursor.fetchone()
+        conn.close()
+
+        if row is None:
+            return None
+
+        return self._row_to_task(row)
+
     # -------------------------------
     # UPDATE TASK
     # -------------------------------
