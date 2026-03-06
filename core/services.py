@@ -16,10 +16,15 @@ class TaskNotFoundError(TaskError):
 class InvalidTaskError(TaskError):
     """Raised when task data is invalid."""
 
+
+# ==============================
+# Service métier
+# ==============================
+
 class TaskService:
-    """
-    Handle operations and tasks persistence
-    """
+    # --------------------------
+    # CREATE
+    # --------------------------
 
     def __init__(self, repository):
         self.repository = repository
@@ -37,8 +42,11 @@ class TaskService:
 
         return self.repository.add(title, description)
 
-    def list_tasks(self):
-        return self.repository.get_all_tasks()
+    # --------------------------
+    # READ ALL
+    # --------------------------
+    def list_tasks(self, status:TaskStatus | None = None)->List[Task]:
+        return self.repository.get_all_tasks(status)
 
     def complete_task(self, task_id: int):
         return self.repository.mark_done(task_id)

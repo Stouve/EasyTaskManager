@@ -38,11 +38,15 @@ class SQLiteTaskRepository:
     #-------------------------------
     #READ ALL
     #-------------------------------
-    def get_all_tasks(self)->list[Task]:
+    def get_all_tasks(self,status:TaskStatus | None = None)->list[Task]:
 
          conn=get_connection()
          cursor=conn.cursor()
-         cursor.execute("SELECT * FROM tasks")
+         if status is None:
+            cursor.execute("SELECT * FROM tasks")
+         else:
+             cursor.execute("SELECT * FROM tasks WHERE status=?",(status.value,))
+
          tasks=cursor.fetchall()
          conn.close()
 
