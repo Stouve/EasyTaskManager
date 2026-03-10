@@ -50,15 +50,31 @@ class TaskService:
 
     def get_task(self, task_id: int)->Task:
 
-        task=self.repository.get(task_id)
+        task=self.repository.get_by_id(task_id)
 
         if task is None:
             raise TaskNotFoundError("Task not found")
         return task
 
     def complete_task(self, task_id: int):
-        return self.repository.mark_done(task_id)
+        task=self.repository.get_by_id(task_id)
+
+        if task.status == TaskStatus.DONE:
+            return task
+
+        self.repository.mark_done(task_id)
+        task.mark_done()
+
+        return task
+
 
     def delete_task(self, task_id: int):
-        return self.repository.delete(task_id)
+        task=self.repository.get_by_id(task_id)
+
+        if task is None:
+            raise TaskNotFoundError(f"Task with id {task_id} not found")
+
+        self.repository.delete(task_id)
+
+
 
