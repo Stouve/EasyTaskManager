@@ -52,6 +52,9 @@ class SQLiteTaskRepository:
 
          return [self._row_to_task(row) for row in tasks]
 
+    # -------------------------------
+    # READ ONE
+    # -------------------------------
     def get_by_id(self,task_id:int)->Task:
         conn=get_connection()
         cursor=conn.cursor()

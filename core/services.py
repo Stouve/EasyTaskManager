@@ -48,6 +48,14 @@ class TaskService:
     def list_tasks(self, status:TaskStatus | None = None)->List[Task]:
         return self.repository.get_all_tasks(status)
 
+    def get_task(self, task_id: int)->Task:
+
+        task=self.repository.get(task_id)
+
+        if task is None:
+            raise TaskNotFoundError("Task not found")
+        return task
+
     def complete_task(self, task_id: int):
         return self.repository.mark_done(task_id)
 
