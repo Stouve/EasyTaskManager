@@ -9,11 +9,20 @@ def main():
 
         manager = TaskService(repository)
 
-        print("Create Task")
-        repository.add("Test Task", "Test Task")
+        repository.empty_table()
 
-        print("Create Task without title")
-        repository.add("", "Empty title")
+        print("Create Basic Task")
+        task = manager.create_task("Basic", "Basic title")
+
+        print("Task : ", task)
+
+
+        task = manager.complete_task(task.id)
+
+        print("Task : ",task)
+
+        manager.delete_task(task.id)
+
 
         # while True:
         #     print("\n1. Add task")

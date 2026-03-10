@@ -33,7 +33,7 @@ class SQLiteTaskRepository:
             title=title,
             description=description,
             status=TaskStatus.PENDING,
-            created_at=datetime.fromordinal(now),
+            created_at=datetime.fromisoformat(now),
         )
 
     #-------------------------------
@@ -81,6 +81,9 @@ class SQLiteTaskRepository:
         conn.commit()
         conn.close()
 
+    # -------------------------------
+    # DELETE TASK
+    # -------------------------------
     def delete(self,task_id:int) -> None:
 
         conn=get_connection()
@@ -92,7 +95,6 @@ class SQLiteTaskRepository:
     #-------------------------------
     #PRIVATE MAPPER
     #-------------------------------
-    @staticmethod
     def _row_to_task(self,row:tuple)->Task:
         return Task(
             id=row["id"],
@@ -101,3 +103,14 @@ class SQLiteTaskRepository:
             status=TaskStatus(row["status"]),
             created_at=datetime.fromisoformat(row["created_at"]),
         )
+
+    # -------------------------------
+    # EMPTY TABLE
+    # -------------------------------
+    def empty_table(self) -> None:
+
+        conn=get_connection()
+        cursor=conn.cursor()
+        cursor.execute("DELETE FROM tasks")
+        conn.commit()
+        conn.close()

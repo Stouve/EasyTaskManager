@@ -57,7 +57,7 @@ class TaskService:
         return task
 
     def complete_task(self, task_id: int):
-        task=self.repository.get_by_id(task_id)
+        task=self.get_task(task_id)
 
         if task.status == TaskStatus.DONE:
             return task
