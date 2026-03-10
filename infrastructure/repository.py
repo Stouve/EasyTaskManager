@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from infrastructure.database import get_connection
@@ -15,7 +15,8 @@ class SQLiteTaskRepository:
         conn=get_connection()
         cursor=conn.cursor()
 
-        now=datetime.now(datetime.UTC).isoformat()
+        now=datetime.now(timezone.utc).isoformat()
+
 
         cursor.execute("INSERT INTO tasks (title,description,status,created_at) VALUES (?,?,?,?)",
                        (title,description,TaskStatus.PENDING.value,now),
