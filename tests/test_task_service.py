@@ -32,3 +32,5 @@ def get_by_id(self, task_id)->Task:
 def mark_done(self, task_id)->Task:
     self.tasks[task_id].status = TaskStatus.DONE
 
+def delete(self, task_id)->Task:
+    del self.tasks[task_id]
