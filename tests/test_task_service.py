@@ -29,3 +29,6 @@ def get_all(self)->List[Task]:
 def get_by_id(self, task_id)->Task:
     return self.tasks.get(task_id)
 
+def mark_done(self, task_id)->Task:
+    self.tasks[task_id].status = TaskStatus.DONE
+
