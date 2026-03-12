@@ -1,3 +1,5 @@
+from typing import List
+
 import pytest
 
 from core.services import TaskService, InvalidTaskError
@@ -21,4 +23,6 @@ class FakeRepository:
         self.counter += 1
         return task
 
+def get_all(self)->List[Task]:
+    return list(self.tasks.values())
 
