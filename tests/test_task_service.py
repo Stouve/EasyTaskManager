@@ -34,3 +34,16 @@ def mark_done(self, task_id)->Task:
 
 def delete(self, task_id)->Task:
     del self.tasks[task_id]
+
+def test_create_success() -> None:
+    service = TaskService(FakeRepository())
+    task=service.create_task("Test",None)
+
+    assert task.title == "Test"
+    assert task.status == TaskStatus.PENDING
+
+def test_create_test_empty_title() -> None:
+    service = TaskService(FakeRepository())
+
+    with pytest.raises(InvalidTaskError):
+        service.create_task("Test",None)
