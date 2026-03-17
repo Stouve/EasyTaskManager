@@ -2,7 +2,7 @@ from typing import List
 
 import pytest
 
-from core.services import TaskService, InvalidTaskError
+from core.services import TaskService, InvalidTaskError, TaskNotFoundError
 from core.models import Task, TaskStatus
 from datetime import datetime, timezone
 
@@ -47,3 +47,41 @@ def test_create_test_empty_title() -> None:
 
     with pytest.raises(InvalidTaskError):
         service.create_task("Test",None)
+
+def test_list_tasks(self) -> None:
+    service = TaskService(FakeRepository())
+
+    task=service.create_task("Task1",None)
+    task=service.create_task("Task2",None)
+
+    tasks=service.list_tasks()
+
+    assert len(tasks) == 2
+
+def test_mark_done(self) -> None:
+    service = TaskService(FakeRepository())
+    task=service.create_task("TODO",None)
+
+    service.complete_task(task.id)
+
+    tasks=service.list_tasks()
+
+
+    assert tasks[0].status == TaskStatus.DONE
+
+def test_delete_task(self) -> None:
+    service = TaskService(FakeRepository())
+
+    task=service.create_task("Task1",None)
+
+    service.delete_task(task.id)
+
+    tasks=service.list_tasks()
+
+    assert len(tasks) == 0
+
+def test_complete_nonexisting_task(self) -> None:
+    service = TaskService(FakeRepository())
+
+    with pytest.raises(TaskNotFoundError):
+        task=service.complete_task(999)
