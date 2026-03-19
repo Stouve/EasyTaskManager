@@ -7,12 +7,19 @@ from core.models import Task, TaskStatus
 
 class SQLiteTaskRepository:
 
+    def __init__(self, db_path="tasks.db"):
+        self.db_path=db_path
+
+    def _connect(self):
+        return get_connection(self.db_path)
+
     #-------------------------------
     #CREATE
     #-------------------------------
     def add(self,title:str, description:Optional[str])->Task:
 
-        conn=get_connection()
+        conn=self._connect()
+
         cursor=conn.cursor()
 
         now=datetime.now(timezone.utc).isoformat()
@@ -41,7 +48,7 @@ class SQLiteTaskRepository:
     #-------------------------------
     def get_all_tasks(self,status:TaskStatus | None = None)->list[Task]:
 
-         conn=get_connection()
+         conn=self._connect()
          cursor=conn.cursor()
          if status is None:
             cursor.execute("SELECT * FROM tasks")
@@ -57,7 +64,7 @@ class SQLiteTaskRepository:
     # READ ONE
     # -------------------------------
     def get_by_id(self,task_id:int)->Task:
-        conn=get_connection()
+        conn=self._connect()
         cursor=conn.cursor()
         cursor.execute("SELECT * FROM tasks WHERE id=?",(task_id,))
         row=cursor.fetchone()
@@ -73,7 +80,7 @@ class SQLiteTaskRepository:
     # -------------------------------
     def mark_done(self,task_id:int):
 
-        conn=get_connection()
+        conn=self._connect()
         cursor=conn.cursor()
         cursor.execute(
             "UPDATE tasks SET status = ? WHERE id=?",
@@ -86,7 +93,7 @@ class SQLiteTaskRepository:
     # -------------------------------
     def delete(self,task_id:int) -> None:
 
-        conn=get_connection()
+        conn=self._connect()
         cursor=conn.cursor()
         cursor.execute("DELETE FROM tasks WHERE id=?",(task_id,))
         conn.commit()
@@ -109,7 +116,7 @@ class SQLiteTaskRepository:
     # -------------------------------
     def empty_table(self) -> None:
 
-        conn=get_connection()
+        conn=self._connect()
         cursor=conn.cursor()
         cursor.execute("DELETE FROM tasks")
         conn.commit()
