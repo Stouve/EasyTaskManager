@@ -1,15 +1,13 @@
 import sqlite3
 
-DB_NAME = 'tasks.db'
-
-def get_connection():
-    conn = sqlite3.connect(DB_NAME)
+def get_connection(db_path:str = "tasks.db"):
+    conn = sqlite3.connect(db_path)
     conn.row_factory=sqlite3.Row
 
     return conn
 
-def init_db():
-    conn = get_connection()
+def init_db(db_path: str = "tasks.db"):
+    conn = get_connection(db_path)
     cursor = conn.cursor()
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS tasks (
