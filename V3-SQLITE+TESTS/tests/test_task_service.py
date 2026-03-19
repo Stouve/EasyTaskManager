@@ -1,10 +1,7 @@
-from typing import List
-
 import pytest
 
 from core.services import TaskService, InvalidTaskError, TaskNotFoundError
 from core.models import Task, TaskStatus
-from datetime import datetime, timezone
 
 from tests.conftest import FakeRepository
 

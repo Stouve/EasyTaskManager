@@ -1,5 +1,3 @@
-from numpy.f2py.symbolic import as_eq
-
 from core.models import TaskStatus
 
 def test_add_and_get(repo):
