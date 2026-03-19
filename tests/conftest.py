@@ -31,7 +31,7 @@ class FakeRepository:
         return task
 
     def get_all_tasks(self,status:TaskStatus | None = None) -> List[Task]:
-        if status is not None:
+        if status is None:
             return list(self.tasks.values())
         return [elt for elt in self.tasks.values() if elt.status == status]
 

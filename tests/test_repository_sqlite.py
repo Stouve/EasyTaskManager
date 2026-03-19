@@ -5,7 +5,7 @@ from core.models import TaskStatus
 def test_add_and_get(repo):
     task = repo.add("Test",None)
 
-    tasks=repo.get_all_tasks
+    tasks=repo.get_all_tasks()
 
     assert len(tasks) == 1
     assert tasks[0].title == "Test"
