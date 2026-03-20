@@ -7,6 +7,10 @@ class TaskStatusDB(str, enum.Enum):
     PENDING = "pending"
     DONE = "done"
 
+    from core.models import TaskStatus
+
+    status = Column(Enum(TaskStatus), default=TaskStatus.PENDING)
+
 class TaskModel(Base):
     __tablename__ = "tasks"
 
