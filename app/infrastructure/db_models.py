@@ -13,5 +13,15 @@ class TaskModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False, index=True)
     description = Column(String, nullable=True)
-    status = Column(Enum(TaskStatus), default=TaskStatus.PENDING, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc).isoformat(), nullable=False)
+
+    status = Column(
+        Enum(TaskStatus),
+        default=TaskStatus.PENDING,
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.now(timezone.utc).isoformat(),
+        nullable=False
+    )

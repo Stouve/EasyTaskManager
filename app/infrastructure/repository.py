@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
+from typing import List
 from app.infrastructure.db_models import TaskModel
 from app.core.task import Task, TaskStatus
 
@@ -26,6 +27,32 @@ class TaskRepository:
         # --------------------------
         # CONVERSION
         # --------------------------
+
+    def get_all_tasks(self, status: TaskStatus | None = None) -> List[Task]:
+        query = self.db.query(TaskModel)
+
+        if status:
+            query = query.filter(TaskModel.status == status)
+
+        tasks = query.all()
+
+        return [self._to_domain(t) for t in tasks]
+
+    def get_by_id(self,task_id:int)->Task:
+        task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
+
+        if task is None:
+            return None
+        return self._to_domain(task)
+
+    def mark_done(self,task_id:int)->Task:
+        task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
+
+        if task:
+            task.status = TaskStatus.DONE
+            self.db.commit()
+
+
 
     def _to_domain(self, model: TaskModel) -> Task:
         return Task(
