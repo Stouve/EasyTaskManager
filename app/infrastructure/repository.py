@@ -52,6 +52,11 @@ class TaskRepository:
             task.status = TaskStatus.DONE
             self.db.commit()
 
+    def delete(self, task_id:int) -> None:
+        task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
+        if task:
+            self.db.delete(task)
+            self.db.commit()
 
 
     def _to_domain(self, model: TaskModel) -> Task:
