@@ -65,5 +65,5 @@ class TaskRepository:
             title=model.title,
             description=model.description,
             status=model.status,
-            created_at=datetime.fromisoformat(model.created_at),
+            created_at=model.created_at,
         )
