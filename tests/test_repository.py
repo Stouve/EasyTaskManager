@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy import create_engine
-
+from app.core.task import Task
 from sqlalchemy.orm import Session
 from app.infrastructure.database import SessionLocal, Base, engine
 from app.infrastructure.repository import TaskRepository
@@ -24,7 +24,7 @@ def db_session(engine):
     connection = engine.connect()
     transaction = connection.begin()
 
-    session = Session(bind=engine)
+    session = Session(bind=connection)
     yield session
 
     session.close()
@@ -32,34 +32,27 @@ def db_session(engine):
     connection.close()
 
 
-def test_create_task():
-    db = SessionLocal()
-    repo = TaskRepository(db)
+def test_create_task(db_session):
+    repo = TaskRepository(db_session)
 
     task = repo.add("Test task", "description")
 
     assert task is not None
     assert task.title == "Test task"
 
-    db.close()
-
-def test_get_tasks():
-    db = SessionLocal()
-    repo = TaskRepository(db)
+def test_get_tasks(db_session):
+    repo = TaskRepository(db_session)
 
     tasks=repo.get_all_tasks()
     assert isinstance(tasks, list)
 
-    db.close()
+def test_filter_tasks(db_session):
 
-def test_filter_tasks():
-    db = SessionLocal()
-    repo = TaskRepository(db)
+    repo = TaskRepository(db_session)
 
     tasks = repo.get_all_tasks(TaskStatus.PENDING)
 
     for t in tasks:
         assert t.status == TaskStatus.PENDING
 
-    db.close()
 
