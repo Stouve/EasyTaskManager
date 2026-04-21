@@ -13,5 +13,5 @@ def get_task_repository(db=Depends(get_db)):
     return TaskRepository(db)
 
 @router.get("/")
-def get_tasks():
-    return{"tasks":[]}
+def get_tasks(repo : TaskRepository = Depends(get_task_repository)):
+    return repo.get_all_tasks()
