@@ -13,6 +13,7 @@ SessionLocal = sessionmaker(bind=engine)
 #Create base class for all models
 Base = declarative_base()
 
+
 def get_db():
     db = SessionLocal()
     try:
