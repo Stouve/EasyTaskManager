@@ -25,7 +25,7 @@ class Task():
     title: str
     description: str
     status : str
-    created_at: datetim
+    created_at: datetime
 
 
 
