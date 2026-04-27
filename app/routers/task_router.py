@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends
+
+from app.core import task
 from app.infrastructure.database import get_db
 from app.infrastructure.repository import TaskRepository
-from app.schemas.task_schema import TaskOut
+from app.schemas.task_schema import TaskOut, TaskCreate
 from typing import List
 
 router = APIRouter(
@@ -16,3 +18,8 @@ def get_task_repository(db=Depends(get_db)):
 def get_tasks(repo : TaskRepository = Depends(get_task_repository)):
     return repo.get_all_tasks()
 
+@router.post("/", response_model=TaskOut)
+def create_task(task: TaskCreate,
+                repo : TaskRepository = Depends(get_task_repository)
+                ):
+    return repo.add(task.title, task.description)
