@@ -28,3 +28,7 @@ def create_task(task: TaskCreate,
                 service : TaskService = Depends(get_task_service)
                 ):
     return service.create_task(task.title, task.description)
+
+@router.get("/{task_id}", response_model=TaskOut)
+def get_task_by_id(task_id: int, service : TaskService = Depends(get_task_service)):
+    return service.get_task(task_id)
