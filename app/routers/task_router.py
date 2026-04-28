@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core import task
 from app.infrastructure.database import get_db
 from app.infrastructure.repository import TaskRepository
-from app.schemas.task_schema import TaskOut, TaskCreate
+from app.schemas.task_schema import TaskOut, TaskCreate, TaskUpdate
 from typing import List
 from app.core.services import Task, TaskService
 
@@ -32,6 +32,17 @@ def create_task(task: TaskCreate,
 @router.get("/{task_id}", response_model=TaskOut)
 def get_task_by_id(task_id: int, service : TaskService = Depends(get_task_service)):
     return service.get_task(task_id)
+
+@router.put("/{task_id}", response_model=TaskOut)
+def update_task(task_id: int,
+                task: TaskUpdate,
+                service : TaskService = Depends(get_task_service)
+                ):
+    updated_task = service.update_task(task_id, task.title, task.description)
+
+    if not updated_task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return updated_task
 
 @router.delete("/{task_id}")
 def delete_task(task_id: int, service : TaskService = Depends(get_task_service)):
