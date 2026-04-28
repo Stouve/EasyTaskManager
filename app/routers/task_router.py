@@ -38,10 +38,8 @@ def update_task(task_id: int,
                 task: TaskUpdate,
                 service : TaskService = Depends(get_task_service)
                 ):
-    updated_task = service.update_task(task_id, task.title, task.description)
-
     try:
-        return service.update_task(task_id, updated_task.title, updated_task.description)
+        return service.update_task(task_id, task.title, task.description)
 
     except ValueError:
         raise HTTPException(404)
