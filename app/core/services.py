@@ -68,7 +68,12 @@ class TaskService:
 
     def update_task(self, task_id: int, title: str, description: str | None):
 
-        return self.repository.update_task(task_id, title, description)
+        task=self.repository.update_task(task_id, title, description)
+
+        if not task:
+            raise ValueError("Task not found")
+
+        return task
 
     def delete_task(self, task_id: int):
         task=self.repository.get_by_id(task_id)
