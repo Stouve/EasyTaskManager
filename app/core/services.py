@@ -66,6 +66,9 @@ class TaskService:
 
         return task
 
+    def update_task(self, task_id: int, title: str, description: str | None):
+
+        self.repository.update(task_id, title, description)
 
     def delete_task(self, task_id: int):
         task=self.repository.get_by_id(task_id)
