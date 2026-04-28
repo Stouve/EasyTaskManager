@@ -24,6 +24,5 @@ class TaskOut(BaseModel):
         orm_mode = True
 
 class TaskUpdate(BaseModel):
-    id: int
     title: str
     description: Optional[str] = None
