@@ -1,3 +1,4 @@
+from fontTools.ttLib.tables.S__i_l_f import table_S__i_l_f
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 from typing import List
@@ -20,6 +21,7 @@ class TaskRepository:
 
         self.db.add(db_task)
         self.db.commit()
+        # reload object from database
         self.db.refresh(db_task)
 
         return self._to_domain(db_task)
@@ -52,7 +54,19 @@ class TaskRepository:
             task.status = TaskStatus.DONE
             self.db.commit()
 
-    def
+    def update_task(self, task_id:int, title: str, description: str | None)->Task:
+        task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
+        if not task:
+            return None
+
+        task.title = title
+        task.description = description
+
+        self.db.commit()
+        #reload object from database
+        self.db.refresh(task)
+
+        return task
 
     def delete(self, task_id:int) -> None:
         task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
