@@ -1,6 +1,8 @@
 from app.core.task import Task, TaskStatus
 from typing import List
 
+from app.schemas.task_schema import TaskUpdate
+
 
 # ==============================
 # Exceptions métier
@@ -66,14 +68,18 @@ class TaskService:
 
         return task
 
-    def update_task(self, task_id: int, title: str, description: str | None):
+    def update_task(self, task_id: int, task_update: TaskUpdate) -> Task:
 
-        task=self.repository.update_task(task_id, title, description)
+        task=self.repository.update_task(task_id, task_update.title, task_update.description)
 
         if not task:
             raise ValueError("Task not found")
 
         return task
+
+    def patch_task(self, task_id: int, title: str, description: str | None = None) -> Task:
+
+        task=self.repository.patch_task(task_id)
 
     def delete_task(self, task_id: int):
         task=self.repository.get_by_id(task_id)
