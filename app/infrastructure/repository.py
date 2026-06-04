@@ -1,7 +1,7 @@
 from fontTools.ttLib.tables.S__i_l_f import table_S__i_l_f
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Optional
 from app.infrastructure.db_models import TaskModel
 from app.core.task import Task, TaskStatus
 
@@ -40,7 +40,7 @@ class TaskRepository:
 
         return [self._to_domain(t) for t in tasks]
 
-    def get_by_id(self,task_id:int)->Task:
+    def get_by_id(self,task_id:int)-> Task | None:
         task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
 
         if task is None:
@@ -54,7 +54,7 @@ class TaskRepository:
             task.status = TaskStatus.DONE
             self.db.commit()
 
-    def update_task(self, task_id:int, title: str, description: str | None)->Task:
+    def update_task(self, task_id:int, title: str, description: str | None)-> Task | None:
         task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
         if not task:
             return None
