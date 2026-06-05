@@ -69,6 +69,14 @@ class TaskRepository:
 
         return self.save(task_md)
 
+    def update_status(self, task_id:int, status: TaskStatus)-> Task | None:
+        task_md=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
+        if not task_md:
+            return None
+
+        task_md.status = status
+        return self.save(task_md)
+
     def save(self, task_model:TaskModel)->Task:
 
         self.db.commit()
