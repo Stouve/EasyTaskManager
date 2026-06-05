@@ -66,7 +66,7 @@ class TaskRepository:
         #reload object from database
         self.db.refresh(task)
 
-        return task
+        return self._to_domain(task)
 
     def delete(self, task_id:int) -> None:
         task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
