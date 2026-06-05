@@ -20,7 +20,7 @@ def get_task_service(repo : TaskRepository = Depends(get_task_repository)):
     return TaskService(repo)
 
 @router.get("/", response_model=List[TaskOut])
-def get_tasks(status:TaskStatus,service : TaskService = Depends(get_task_service)):
+def get_tasks(status:TaskStatus | None = None, service : TaskService = Depends(get_task_service)):
     return service.list_tasks(status)
 
 @router.post("/", response_model=TaskOut)
