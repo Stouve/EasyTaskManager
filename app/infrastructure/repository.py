@@ -48,14 +48,6 @@ class TaskRepository:
             return None
         return self._to_domain(task)
 
-#This function will be deleted because it should be in service as it contains core rules and not persistence
-    def mark_done(self,task_id:int)->Task:
-        task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
-
-        if task:
-            task.status = TaskStatus.DONE
-            self.db.commit()
-
     def update_task(self, task_id:int, title: str, description: str | None)-> Task | None:
         task_md=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
         if not task_md:
