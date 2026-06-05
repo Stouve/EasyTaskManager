@@ -35,11 +35,11 @@ def get_task_by_id(task_id: int, service : TaskService = Depends(get_task_servic
 
 @router.put("/{task_id}", response_model=TaskOut)
 def update_task(task_id: int,
-                task: TaskUpdate,
+                task_update: TaskUpdate,
                 service : TaskService = Depends(get_task_service)
                 ):
     try:
-        return service.update_task(task_id, task.title, task.description)
+        return service.update_task(task_id, task_update)
 
     except ValueError:
         raise HTTPException(404)
