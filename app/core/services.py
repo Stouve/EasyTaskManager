@@ -62,9 +62,11 @@ class TaskService:
     def complete_task(self, task_id: int):
         task=self.get_task(task_id)
 
-        if task.is_complete()
+        if task.is_complete():
             return task
+
         task.mark_done()
+        return self.repository.update_status(task_id, TaskStatus.DONE)
 
 
 
