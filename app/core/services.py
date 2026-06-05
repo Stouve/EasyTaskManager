@@ -1,7 +1,9 @@
+from numpy.ma.core import take
+
 from app.core.task import Task, TaskStatus
 from typing import List
 
-from app.schemas.task_schema import TaskUpdate
+from app.schemas.task_schema import TaskUpdate, TaskPatch
 
 
 # ==============================
@@ -60,11 +62,11 @@ class TaskService:
     def complete_task(self, task_id: int):
         task=self.get_task(task_id)
 
-        if task.status == TaskStatus.DONE:
+        if task.is_complete()
             return task
-
-        self.repository.mark_done(task_id)
         task.mark_done()
+
+
 
         return task
 
@@ -72,14 +74,20 @@ class TaskService:
 
         task=self.repository.update_task(task_id, task_update.title, task_update.description)
 
-        if not task:
-            raise ValueError("Task not found")
+        if task is None:
+            raise TaskNotFoundError("Task not found")
 
         return task
 
-    def patch_task(self, task_id: int, title: str, description: str | None = None) -> Task:
+    def patch_task(self, task_id: int, task_patch: TaskPatch) -> Task:
 
-        task=self.repository.patch_task(task_id)
+        #Get data from request JSON
+        update_data = task_patch.model_dump(exclude_unset=True)
+
+        task=self.repository(task_id,update_data)
+
+        if task is None:
+            raise TaskNotFoundError("Task not found")
 
     def delete_task(self, task_id: int):
         task=self.repository.get_by_id(task_id)
