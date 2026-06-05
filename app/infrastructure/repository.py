@@ -1,4 +1,3 @@
-from fontTools.ttLib.tables.S__i_l_f import table_S__i_l_f
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 from typing import List, Optional
@@ -47,6 +46,7 @@ class TaskRepository:
             return None
         return self._to_domain(task)
 
+#This function will be deleted because it should be in service as it contains core rules and not persistence
     def mark_done(self,task_id:int)->Task:
         task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
 
@@ -67,6 +67,13 @@ class TaskRepository:
         self.db.refresh(task)
 
         return self._to_domain(task)
+
+    def save(self, task_model:TaskModel)->Task:
+
+        self.db.commit()
+        self.db.refresh(task_model)
+        return self._to_domain(task_model)
+
 
     def delete(self, task_id:int) -> None:
         task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
