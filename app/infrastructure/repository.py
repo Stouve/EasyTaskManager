@@ -3,6 +3,8 @@ from datetime import datetime, timezone
 from typing import List, Optional
 from app.infrastructure.db_models import TaskModel
 from app.core.task import Task, TaskStatus
+from app.schemas.task_schema import TaskUpdate
+
 
 class TaskRepository:
 
@@ -55,25 +57,32 @@ class TaskRepository:
             self.db.commit()
 
     def update_task(self, task_id:int, title: str, description: str | None)-> Task | None:
-        task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
-        if not task:
+        task_md=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
+        if not task_md:
             return None
 
-        task.title = title
-        task.description = description
+        task_md.title = title
+        task_md.description = description
 
-        self.db.commit()
-        #reload object from database
-        self.db.refresh(task)
+        return self.save(task_md)
 
-        return self._to_domain(task)
+    def patch_task(self, task_id:int, update_data:dict) -> Task | None:
+        task_md=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
+
+        if not task_md:
+            return None
+
+        for field,value in update_data.items():
+            setattr(task_md,field,value)
+
+        return self.save(task_md)
 
     def save(self, task_model:TaskModel)->Task:
 
         self.db.commit()
+        #Reload object from database
         self.db.refresh(task_model)
         return self._to_domain(task_model)
-
 
     def delete(self, task_id:int) -> None:
         task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
