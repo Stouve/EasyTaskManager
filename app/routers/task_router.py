@@ -50,8 +50,9 @@ def patch_task(task_id: int,
                service : TaskService = Depends(get_task_service)):
     try:
         return service.patch_task(task_id, task_patch)
-    except ValueError:
-        raise HTTPException(404)
+
+    except TaskNotFoundError:
+        raise HTTPException(status_code=404, detail="Task not found")
 
 @router.delete("/{task_id}")
 def delete_task(task_id: int, service : TaskService = Depends(get_task_service)):
