@@ -6,7 +6,7 @@ from app.infrastructure.database import get_db
 from app.infrastructure.repository import TaskRepository
 from app.schemas.task_schema import TaskOut, TaskCreate, TaskUpdate, TaskPatch
 from typing import List
-from app.core.services import TaskService
+from app.core.services import TaskService, TaskNotFoundError
 
 router = APIRouter(
     prefix="/tasks",
@@ -41,8 +41,8 @@ def update_task(task_id: int,
     try:
         return service.update_task(task_id, task_update)
 
-    except ValueError:
-        raise HTTPException(404)
+    except TaskNotFoundError:
+        raise HTTPException(status_code=404, detail="Task not found")
 
 @router.patch("/{task_id}", response_model=TaskOut)
 def patch_task(task_id: int,
