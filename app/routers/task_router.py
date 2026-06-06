@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.task import TaskStatus
 from app.infrastructure.database import get_db
 from app.infrastructure.repository import TaskRepository
-from app.schemas.task_schema import TaskOut, TaskCreate, TaskUpdate
+from app.schemas.task_schema import TaskOut, TaskCreate, TaskUpdate, TaskPatch
 from typing import List
 from app.core.services import TaskService
 
@@ -44,6 +44,14 @@ def update_task(task_id: int,
     except ValueError:
         raise HTTPException(404)
 
+@router.patch("/{task_id}", response_model=TaskOut)
+def patch_task(task_id: int,
+               task_patch: TaskPatch,
+               service : TaskService = Depends(get_task_service)):
+    try:
+        return service.patch_task(task_id, task_patch)
+    except ValueError:
+        raise HTTPException(404)
 
 @router.delete("/{task_id}")
 def delete_task(task_id: int, service : TaskService = Depends(get_task_service)):
