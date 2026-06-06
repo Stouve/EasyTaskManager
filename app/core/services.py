@@ -86,10 +86,12 @@ class TaskService:
         #Get data from request JSON
         update_data = task_patch.model_dump(exclude_unset=True)
 
-        task=self.repository(task_id,update_data)
+        task=self.repository.patch_task(task_id,update_data)
 
         if task is None:
             raise TaskNotFoundError("Task not found")
+
+        return task
 
     def delete_task(self, task_id: int):
         task=self.repository.get_by_id(task_id)
