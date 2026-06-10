@@ -1,0 +1,4 @@
+/.env
+/requirements.txt.bak
+/tasks.db
+/test.db
