@@ -1,5 +1,3 @@
-from numpy.ma.core import take
-
 from app.core.task import Task, TaskStatus
 from typing import List
 
