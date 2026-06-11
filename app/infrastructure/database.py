@@ -6,8 +6,9 @@ import os
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, echo=DEBUG)
 
 #Create configured session class
 SessionLocal = sessionmaker(bind=engine)
