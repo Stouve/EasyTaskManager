@@ -22,16 +22,11 @@ GIT
 git clone https://github.com/Stouve/EasyTaskManager
 poetry install
 ```
-PostgreSQL 
+POSTGRESQL
+
+Fill setup.sql with user/pwd and run 
 ```
-# Login with superuser
-psql -U postgres
-
-# Create user
-CREATE USER MyUser WITH PASSWORD 'MyPassword';
-
-# Create Database
-CREATE DATABASE tasks_db OWNER MyUser;
+psql -U postgres -f setup.sql
 ```
 
 Copy `.env.example` into `.env` et fill with user/pwd :
