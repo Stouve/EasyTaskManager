@@ -36,6 +36,8 @@ class TaskService:
 
         if not title:
             raise InvalidTaskError("Task title cannot be empty")
+        if len(title) > 255:
+            raise InvalidTaskError("Task title cannot be longer than 255 characters")
 
         if description is not None:
             description=description.strip()
