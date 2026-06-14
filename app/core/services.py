@@ -88,10 +88,6 @@ class TaskService:
         task.mark_done()
         return self.repository.update_status(task_id, TaskStatus.DONE)
 
-
-
-        return task
-
     def update_task(self, task_id: int, task_update: TaskUpdate) -> Task:
 
         task=self.repository.update_task(task_id, task_update.title, task_update.description)
