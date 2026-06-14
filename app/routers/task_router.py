@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from app.core.task import TaskStatus
@@ -69,6 +69,7 @@ def patch_task(task_id: int,
 @router.delete("/{task_id}")
 def delete_task(task_id: int, service : TaskService = Depends(get_task_service)):
     try:
-        return service.delete_task(task_id)
+        service.delete_task(task_id)
+        return Response(status_code=204)
     except TaskNotFoundError:
         raise HTTPException(status_code=404, detail="Task not found")
