@@ -55,7 +55,7 @@ class TaskService:
                    order: str = "desc",
     )-> PaginatedResponse[TaskOut]:
 
-        tasks, total = self.repository.get_tasks(status=status,
+        tasks, total = self.repository.get_all_tasks(status=status,
                                                  page=page,
                                                  page_size=page_size,
                                                  sort_by=sort_by,
