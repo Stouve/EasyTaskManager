@@ -1,7 +1,8 @@
 from app.core.task import Task, TaskStatus
 from typing import List
-
-from app.schemas.task_schema import TaskUpdate, TaskPatch
+from app.schemas.task_schema import TaskUpdate, TaskPatch, TaskOut
+from app.schemas.pagination import PaginatedResponse
+import math
 
 
 # ==============================
@@ -35,6 +36,8 @@ class TaskService:
 
         if not title:
             raise InvalidTaskError("Task title cannot be empty")
+        if len(title) > 255:
+            raise InvalidTaskError("Task title cannot be longer than 255 characters")
 
         if description is not None:
             description=description.strip()
@@ -46,8 +49,29 @@ class TaskService:
     # --------------------------
     # READ ALL
     # --------------------------
-    def list_tasks(self, status:TaskStatus | None = None)->List[Task]:
-        return self.repository.get_all_tasks(status)
+    def list_tasks(self,
+                   status:TaskStatus | None = None,
+                   page: int = 1,
+                   page_size: int = 10,
+                   sort_by: str = "created_at",
+                   order: str = "desc",
+    )-> PaginatedResponse[TaskOut]:
+
+        tasks, total = self.repository.get_all_tasks(status=status,
+                                                 page=page,
+                                                 page_size=page_size,
+                                                 sort_by=sort_by,
+                                                 order=order,
+        )
+
+        total_pages = math.ceil(total/page_size) if total > 0 else 1
+
+        return PaginatedResponse(items=tasks,
+                                 total=total,
+                                 page=page,
+                                 page_size=page_size,
+                                 total_pages=total_pages,
+        )
 
     def get_task(self, task_id: int)->Task:
 
@@ -65,10 +89,6 @@ class TaskService:
 
         task.mark_done()
         return self.repository.update_status(task_id, TaskStatus.DONE)
-
-
-
-        return task
 
     def update_task(self, task_id: int, task_update: TaskUpdate) -> Task:
 
