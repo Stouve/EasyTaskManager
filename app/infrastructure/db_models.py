@@ -5,7 +5,7 @@ from app.core.task import TaskStatus
 
 class TaskModel(Base):
     """
-    Modèle SQLAlchemy représentant la table 'tasks'
+    SQLAlchemy Task Model for Task table
     """
     __tablename__ = "tasks"
 
