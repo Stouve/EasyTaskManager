@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Boolean
+from dulwich.porcelain import prune
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Boolean, column
 from sqlalchemy.orm import relationship
-from datetime import datetime, timezone,
+from datetime import datetime, timezone
 from app.infrastructure.database import Base
 from app.core.user import RoleEnum
 
@@ -27,4 +28,26 @@ class UserModel(Base):
         nullable=False
     )
 
+tasks = relationship("TaskModel", back_populates="owner", cascade="all, delete-orphan")
+refresh_tokens = relationship("RefreshTokenModel", back_populates="user",cascade="all, delete-orphan")
 
+class RefreshTokenModel(Base):
+    """
+    SQLAlchemy RefreshToken Model for RefreshToken table
+    we never store raw token but his sha256 hash
+    """
+    __tablename__ = "refresh_token"
+    id = column(Integer, primary_key=True, index=True)
+    token_hash = Column(String(255), nullable=False, unique=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    revoked_at = Column(Boolean, default=False, nullable=False)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False
+    )
+
+    user=relationship("UserModel", back_populates="refresh_token")
