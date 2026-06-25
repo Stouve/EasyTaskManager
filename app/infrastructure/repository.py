@@ -29,10 +29,6 @@ class TaskRepository:
 
         return self._to_domain(db_task)
 
-        # --------------------------
-        # CONVERSION
-        # --------------------------
-
     def get_all_tasks(self,
                       status: TaskStatus | None = None,
                       page: int = 1,
