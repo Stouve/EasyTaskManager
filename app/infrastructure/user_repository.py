@@ -37,6 +37,12 @@ class UserRepository:
             return None
         return self._to_domain(user)
 
+    def get_by_id(self, user_id: int) -> Optional[User]:
+
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if user is None:
+            return None
+        return self._to_domain(user)
 
 
     def _to_domain(self, db_user: UserModel) -> User:
