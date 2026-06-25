@@ -54,3 +54,13 @@ class UserRepository:
             is_active=db_user.is_active,
             created_at=db_user.created_at,
         )
+
+    # --------------------------
+    # REFRESH TOKENS
+    # --------------------------
+
+    @staticmethod
+    def _hash_token(raw_token: str) -> str:
+        return hashlib.sha256(raw_token.encode('utf-8')).hexdigest()
+
+
