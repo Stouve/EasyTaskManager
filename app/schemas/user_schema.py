@@ -34,4 +34,4 @@ class AccessTokenResponse(BaseModel):
     Refresh token is in cookie httpOnly on server side, never readable from client side
     """
     access_token: str
-    token_type: "bearer"
+    token_type: str = "bearer"
