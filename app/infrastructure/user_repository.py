@@ -26,11 +26,22 @@ class UserRepository:
         self.db.commit()
         #reload object from database
         self.db.refresh(db_user)
-
+        #Conversion to object type user from db
         return self._to_domain(db_user)
+
+    def get_by_email(self, email: str) -> Optional[User]:
+
+        user = self.db.query(UserModel).filter(UserModel.email == email).first()
+
+        if user is None:
+            return None
+        return self._to_domain(user)
+
+
 
     def _to_domain(self, db_user: UserModel) -> User:
         return User(
+            id=db_user.id,
             email=db_user.email,
             hashed_password=db_user.hashed_password,
             role=db_user.role,
