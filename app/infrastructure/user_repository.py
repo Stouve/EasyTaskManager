@@ -29,3 +29,11 @@ class UserRepository:
 
         return self._to_domain(db_user)
 
+    def _to_domain(self, db_user: UserModel) -> User:
+        return User(
+            email=db_user.email,
+            hashed_password=db_user.hashed_password,
+            role=db_user.role,
+            is_active=db_user.is_active,
+            created_at=db_user.created_at,
+        )
