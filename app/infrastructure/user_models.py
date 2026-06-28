@@ -14,6 +14,7 @@ class UserModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), nullable=False, unique=True, index=True)
     hashed_password = Column(String(255), nullable=False)
+
     role = Column(
         Enum(RoleEnum, name="roleenum"),
         default=RoleEnum.USER,
@@ -42,7 +43,7 @@ class RefreshTokenModel(Base):
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
 
     expires_at = Column(DateTime(timezone=True), nullable=False)
-    revoked_at = Column(Boolean, default=False, nullable=False)
+    revoked = Column(Boolean, default=False, nullable=False)
 
     created_at = Column(
         DateTime(timezone=True),
