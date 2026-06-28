@@ -91,6 +91,13 @@ def revoke_refresh_token(self, raw_token:str) -> None:
         db_token.revoked = True
         self.db.commit()
 
+def revoke_all_refresh_tokens_for_user(self, user_id:int) -> None:
+
+    self.db.query(RefreshTokenModel).filter(RefreshTokenModel.user_id == user_id,
+                                            RefreshTokenModel.revoked.is_(False)
+                                            ).update({"revoked": True})
+    self.db.commit()
+
 
 
 
