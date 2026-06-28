@@ -76,3 +76,30 @@ def issue_tokens(self, user: User) -> tuple[str, str, datetime]:
     self.user_repository.store_refresh_token(user.id,refresh_token,expires_at)
 
     return access_token, refresh_token, expires_at
+
+def refresh_access_token(self, raw_refresh_token:str)->str:
+    """
+    verify refresh token(signature, type, validity) and generates new access token, refresh token is not renewed
+    """
+    try:
+        payload=decode_token(raw_refresh_token,expected_type=TokenType.REFRESH)
+    except InvalidTokenException:
+        raise InvalidRefreshToken("Refresh token is invalid or expired")
+
+    #get token from DB
+    db_token=self.user_repository.get_valid_refresh_token(raw_refresh_token)
+    if db_token is None:
+        raise InvalidRefreshToken("Refresh token is invalid or expired")
+
+    #Check if token is not expired
+    if db_token.expires_at < datetime.now(timezone.utc):
+        raise InvalidRefreshToken("Refresh token is expired")
+
+    user_id=int(payload["sub"])
+    user = self.user_repository.get_by_id(user_id)
+
+    if user is None or not user.is_active:
+        raise InvalidRefreshToken("User not found or inactive")
+
+    return(create_access_token(subject=str(user.id), role=user.role.value))
+
