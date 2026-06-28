@@ -47,3 +47,17 @@ class AuthService:
         hashed_password = hash_password(password)
 
         return(self.user_repository.add(email, hashed_password, role=RoleEnum.USER))
+
+    def authenticate(self, email:str, password:str)->User:
+        email=email.strip().lower()
+
+        user=self.user_repository.get_by_email(email)
+
+        if user is None:
+            raise InvalidCredentials("Invalid Email or password")
+        if not verify_password(password, user.hashed_password):
+            raise InvalidCredentials("Invalid Email or password")
+        if not user.is_active:
+            raise InactiveUserError("Inactive user")
+        return user
+
