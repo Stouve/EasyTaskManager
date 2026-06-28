@@ -103,3 +103,5 @@ def refresh_access_token(self, raw_refresh_token:str)->str:
 
     return(create_access_token(subject=str(user.id), role=user.role.value))
 
+def logout(self,raw_refresh_token)->None:
+    self.user_repository.revoke_refresh_token(raw_refresh_token)
