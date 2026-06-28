@@ -61,3 +61,18 @@ class AuthService:
             raise InactiveUserError("Inactive user")
         return user
 
+# ==============================
+# TOKENS
+# ==============================
+
+def issue_tokens(self, user: User) -> tuple[str, str, datetime]:
+    """
+    Generate access & refresh tokens for user, store hashed refresh token in db,
+    returns access_token, refresh_token, refresh_expires_at
+    """
+    access_token=create_access_token(subject=str(user.id), role=user.role.value)
+    refresh_token, expires_at=create_refresh_token(subject=str(user.id), role=user.role.value)
+
+    self.user_repository.store_refresh_token(user.id,refresh_token,expires_at)
+
+    return access_token, refresh_token, expires_at
