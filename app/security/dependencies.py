@@ -36,7 +36,20 @@ def get_current_user(token: str = Depends(oauth2_scheme),
         raise credentials_exception
     return user
 
+def require_role(required_role: RoleEnum):
+    """
+    Dependence Factory: require_role(RoleEnum.ADMIN) renvoie une
+    dépendance FastAPI qui vérifie le rôle en plus de l'authentification.
 
+    Usage : @router.get(..., dependencies=[Depends(require_role(RoleEnum.ADMIN))])
+    """
+    def _check_role(current_user: User = Depends(get_current_user)) -> User:
+        if current_user.role !=require_role:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                detail="Insufficient permissions",
+                                )
+        return current_user
+    return _check_role
 
 
 
