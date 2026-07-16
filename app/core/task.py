@@ -19,12 +19,14 @@ class Task:
         description (str) : description of the task
         status (str) : status of the task
         created_at (datetime) : date and time of the task
+        owner_id(int) : id of the owner of the task
     """
 
     id: int | None
     title: str
     status: TaskStatus
     created_at: datetime
+    owner_id: int
     description: str | None = None
 
     def mark_done(self) -> None:
