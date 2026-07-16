@@ -16,10 +16,11 @@ class TaskRepository:
     # --------------------------
     # CREATE
     # --------------------------
-    def add(self, title: str, description: str | None) -> Task:
+    def add(self, title: str, description: str | None, owner_id: int) -> Task:
         db_task=TaskModel(
             title=title,
             description=description,
+            owner_id=owner_id,
         )
 
         self.db.add(db_task)
@@ -30,6 +31,7 @@ class TaskRepository:
         return self._to_domain(db_task)
 
     def get_all_tasks(self,
+                      owner_id: int,
                       status: TaskStatus | None = None,
                       page: int = 1,
                       page_size: int = 10,
@@ -41,7 +43,7 @@ class TaskRepository:
         if sort_by not in ALLOWED_SORT_FIELDS:
             sort_by = "created_at"
 
-        query = self.db.query(TaskModel)
+        query = self.db.query(TaskModel).filter(TaskModel.owner_id==owner_id)
 
         if status:
             query = query.filter(TaskModel.status == status)
