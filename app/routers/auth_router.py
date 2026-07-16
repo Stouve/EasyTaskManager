@@ -33,3 +33,15 @@ def get_user_repository(db: Session = Depends(get_db)):
 def get_auth_service(repo: UserRepository = Depends(get_user_repository)):
     return AuthService(repo)
 
+
+def _set_refresh_cookie(response: Response, refresh_token: str) -> None:
+    response.set_cookie(
+        key=REFRESH_TOKEN_EXPIRE_DAYS,
+        value=refresh_token,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite="lax",
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        path="/auth", # Cookie sent on /auth routes only
+    )
+
