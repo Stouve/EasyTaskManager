@@ -65,3 +65,19 @@ def login(credentials: UserLogin, response: Response, service : AuthService = De
     _set_refresh_cookie(response, refresh_token)
 
     return AccessTokenResponse(access_token=access_token)
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(
+        request: Request,
+        response: Response,
+        service : AuthService = Depends(get_auth_service),
+):
+    raw_refresh_token = request.cookies.get(REFRESH_COOKIE_NAME)
+    if raw_refresh_token:
+        service.logout(raw_refresh_token)
+    response.delete_cookie(REFRESH_COOKIE_NAME, path="/auth")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@router.get("/me", response_model=UserOut)
+def get_me(current_user: User = Depends(get_current_user)):
+    return current_user
