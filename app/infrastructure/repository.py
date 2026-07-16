@@ -120,4 +120,5 @@ class TaskRepository:
             description=model.description,
             status=model.status,
             created_at=model.created_at,
+            owner_id=model.owner_id,
         )
