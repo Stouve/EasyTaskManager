@@ -93,8 +93,8 @@ class TaskService:
             #We raise TaskAccessDeniedError for traceability in logs
             raise TaskAccessDeniedError("Task does not belong to this user")
 
-    def complete_task(self, task_id: int):
-        task=self.get_task(task_id)
+    def complete_task(self, task_id: int, owner_id: int) -> Task:
+        task=self.get_task(task_id,owner_id)
 
         if task.is_complete():
             return task
@@ -102,7 +102,7 @@ class TaskService:
         task.mark_done()
         return self.repository.update_status(task_id, TaskStatus.DONE)
 
-    def update_task(self, task_id: int, task_update: TaskUpdate) -> Task:
+    def update_task(self, task_id: int, task_update: TaskUpdate, owner_id: int) -> Task:
 
         task=self.repository.update_task(task_id, task_update.title, task_update.description)
 
@@ -111,7 +111,10 @@ class TaskService:
 
         return task
 
-    def patch_task(self, task_id: int, task_patch: TaskPatch) -> Task:
+    def patch_task(self, task_id: int, task_patch: TaskPatch, owner_id: int) -> Task:
+
+        #Verify existence & property before writing
+        self.get_task(task_id,owner_id)
 
         #Get data from request JSON
         update_data = task_patch.model_dump(exclude_unset=True)
@@ -123,11 +126,13 @@ class TaskService:
 
         return task
 
-    def delete_task(self, task_id: int):
+    def delete_task(self, task_id: int, owner_id: int) -> Task:
         task=self.repository.get_by_id(task_id)
 
         if task is None:
             raise TaskNotFoundError(f"Task with id {task_id} not found")
+
+        self._ensure_owner(task, owner_id)
 
         self.repository.delete(task_id)
 
