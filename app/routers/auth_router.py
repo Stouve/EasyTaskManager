@@ -40,7 +40,7 @@ def _set_refresh_cookie(response: Response, refresh_token: str) -> None:
         value=refresh_token,
         httponly=True,
         secure=COOKIE_SECURE,
-        samesite="lax",
+        samesite="lax",#CSRF base protection to avoid cookie to be sent on cross site requests
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
         path="/auth", # Cookie sent on /auth routes only
     )
