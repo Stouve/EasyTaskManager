@@ -18,6 +18,9 @@ class TaskNotFoundError(TaskError):
 class InvalidTaskError(TaskError):
     """Raised when task data is invalid."""
 
+class TaskAccessDeniedError(TaskError):
+    """Raised when a task exists but does not belong to the requesting user"""
+
 
 # ==============================
 # Service métier
