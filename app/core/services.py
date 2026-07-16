@@ -78,13 +78,20 @@ class TaskService:
                                  total_pages=total_pages,
         )
 
-    def get_task(self, task_id: int)->Task:
+    def get_task(self, task_id: int, owner_id: int)->Task:
 
         task=self.repository.get_by_id(task_id)
 
         if task is None:
             raise TaskNotFoundError("Task not found")
+        self._ensure_owner(task, owner_id)
         return task
+
+    def _ensure_owner(self, task: Task, owner_id: int)->None:
+        if task.owner_id != owner_id:
+            #We raise TaskNotFoundError on HTTP Caller side to avoid reveal exising task for another user
+            #We raise TaskAccessDeniedError for traceability in logs
+            raise TaskAccessDeniedError("Task does not belong to this user")
 
     def complete_task(self, task_id: int):
         task=self.get_task(task_id)
