@@ -31,7 +31,7 @@ class TaskService:
     def __init__(self, repository):
         self.repository = repository
 
-    def create_task(self, title: str, description : str | None = None)->Task:
+    def create_task(self, title: str, owner_id: int, description : str | None = None)->Task:
         title=title.strip()
 
         if not title:
@@ -44,7 +44,7 @@ class TaskService:
             if description=="":
                 description=None
 
-        return self.repository.add(title, description)
+        return self.repository.add(title, description, owner_id)
 
     # --------------------------
     # READ ALL
