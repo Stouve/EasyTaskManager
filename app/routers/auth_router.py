@@ -45,3 +45,23 @@ def _set_refresh_cookie(response: Response, refresh_token: str) -> None:
         path="/auth", # Cookie sent on /auth routes only
     )
 
+@router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
+def register(user_create: UserCreate, service : AuthService = Depends(get_auth_service)):
+    try:
+        return service.register(user_create.email, user_create.password)
+    except EmailAlreadyExistsError:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+@router.post("/login", response_model=AccessTokenResponse)
+def login(credentials: UserLogin, response: Response, service : AuthService = Depends(get_auth_service)):
+    try:
+        user=service.authenticate(credentials.email, credentials.password)
+    except InvalidCredentialsError:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    except InactiveUserError:
+        raise HTTPException(status_code=403, detail="Inactive user")
+
+    access_token, refresh_token, _ = service.issue_tokens(user)
+    _set_refresh_cookie(response, refresh_token)
+
+    return AccessTokenResponse(access_token=access_token)
