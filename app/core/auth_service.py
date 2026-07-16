@@ -20,16 +20,16 @@ from app.security.jwt_handler import (
 class AuthError(Exception):
     """Base exception for auth domain"""
 
-class EmailAlreadyExists(AuthError):
+class EmailAlreadyExistsError(AuthError):
     """Raised when email already exists"""
 
-class InvalidCredentials(AuthError):
+class InvalidCredentialsError(AuthError):
     """Raised when invalid credentials are given"""
 
 class InactiveUserError(AuthError):
     """Raised when inactive users tries to authenticate"""
 
-class InvalidRefreshToken(AuthError):
+class InvalidRefreshTokenError(AuthError):
     """Raised when refresh token is invalid, expired, revoked, or unknown"""
 
 class AuthService:
