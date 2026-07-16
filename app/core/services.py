@@ -50,6 +50,7 @@ class TaskService:
     # READ ALL
     # --------------------------
     def list_tasks(self,
+                   owner_id: int,
                    status:TaskStatus | None = None,
                    page: int = 1,
                    page_size: int = 10,
@@ -57,11 +58,12 @@ class TaskService:
                    order: str = "desc",
     )-> PaginatedResponse[TaskOut]:
 
-        tasks, total = self.repository.get_all_tasks(status=status,
-                                                 page=page,
-                                                 page_size=page_size,
-                                                 sort_by=sort_by,
-                                                 order=order,
+        tasks, total = self.repository.get_all_tasks(owner_id=owner_id,
+                                                     status=status,
+                                                     page=page,
+                                                     page_size=page_size,
+                                                     sort_by=sort_by,
+                                                     order=order,
         )
 
         total_pages = math.ceil(total/page_size) if total > 0 else 1
