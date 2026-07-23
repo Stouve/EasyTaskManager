@@ -7,7 +7,8 @@ from app.infrastructure.repository import TaskRepository
 from app.schemas.pagination import PaginatedResponse, PaginationParams
 from app.schemas.task_schema import TaskOut, TaskCreate, TaskUpdate, TaskPatch
 from typing import List
-from app.core.services import TaskService, TaskNotFoundError
+from app.core.services import TaskService, TaskNotFoundError, TaskAccessDeniedError
+from app.security.dependencies import get_current_user
 
 router = APIRouter(
     prefix="/tasks",
