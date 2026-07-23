@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from app.core.task import TaskStatus
+from app.core.user import User
 from app.infrastructure.database import get_db
 from app.infrastructure.repository import TaskRepository
 from app.schemas.pagination import PaginatedResponse, PaginationParams
@@ -24,8 +25,9 @@ def get_task_service(repo : TaskRepository = Depends(get_task_repository)):
 @router.get("/", response_model=PaginatedResponse[TaskOut])
 def get_tasks(status:TaskStatus | None = None,
               pagination: PaginationParams = Depends(),
-              service : TaskService = Depends(get_task_service)):
-    return service.list_tasks(status=status,
+              service : TaskService = Depends(get_task_service),
+              current_user : User = Depends(get_current_user)):
+    return service.list_tasks(owner_id=current_user.id,
                               page=pagination.page,
                               page_size=pagination.page_size,
                               sort_by=pagination.sort_by,
