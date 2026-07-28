@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.infrastructure.database import get_db
 from app.infrastructure.user_repository import UserRepository
+from app.infrastructure.user_models import UserModel
 from app.core.auth_service import (
     AuthService,
     EmailAlreadyExistsError,
@@ -13,8 +14,8 @@ from app.core.auth_service import (
     InvalidRefreshTokenError,
 )
 from app.schemas.user_schema import UserCreate, UserOut, UserLogin, AccessTokenResponse
-from app.security.dependencies import get_current_user
-from app.core.user import User
+from app.security.dependencies import get_current_user, require_role
+from app.core.user import User, RoleEnum
 
 router = APIRouter(
     prefix="/auth",
@@ -81,3 +82,7 @@ def logout(
 @router.get("/me", response_model=UserOut)
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+@router.get("/users", response_model=list[UserOut], dependencies=[Depends(require_role(RoleEnum.ADMIN))])
+def list_all_users(db: Session = Depends(get_db)):
+    return db.query(UserModel).all()
