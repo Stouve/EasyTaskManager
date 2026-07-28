@@ -48,7 +48,7 @@ def get_task_by_id(task_id: int,
 
     try:
         return service.get_task(task_id, current_user.id)
-    except TaskNotFoundError:
+    except (TaskNotFoundError, TaskAccessDeniedError):
         raise HTTPException(status_code=404, detail="Task not found")
 
 @router.put("/{task_id}", response_model=TaskOut)
