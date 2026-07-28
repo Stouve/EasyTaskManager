@@ -42,10 +42,12 @@ def create_task(task: TaskCreate,
     return service.create_task(task.title, current_user.id, task.description)
 
 @router.get("/{task_id}", response_model=TaskOut)
-def get_task_by_id(task_id: int, service : TaskService = Depends(get_task_service)):
+def get_task_by_id(task_id: int,
+                   service : TaskService = Depends(get_task_service),
+                   current_user : User = Depends(get_current_user)):
 
     try:
-        return service.get_task(task_id)
+        return service.get_task(task_id, current_user.id)
     except TaskNotFoundError:
         raise HTTPException(status_code=404, detail="Task not found")
 
