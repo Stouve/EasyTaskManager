@@ -54,12 +54,13 @@ def get_task_by_id(task_id: int,
 @router.put("/{task_id}", response_model=TaskOut)
 def update_task(task_id: int,
                 task_update: TaskUpdate,
-                service : TaskService = Depends(get_task_service)
+                service : TaskService = Depends(get_task_service),
+                current_user : User = Depends(get_current_user)
                 ):
     try:
-        return service.update_task(task_id, task_update)
+        return service.update_task(task_id, task_update, current_user.id)
 
-    except TaskNotFoundError:
+    except (TaskNotFoundError, TaskAccessDeniedError):
         raise HTTPException(status_code=404, detail="Task not found")
 
 @router.patch("/{task_id}", response_model=TaskOut)
