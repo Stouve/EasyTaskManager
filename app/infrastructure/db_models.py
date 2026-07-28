@@ -28,6 +28,6 @@ class TaskModel(Base):
         nullable=False
     )
 
-owner_id = Column(Integer, ForeignKey("users.id"),nullable=False,index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"),nullable=False,index=True)
 
-owner = relationship("UserModel", back_populates="tasks")
+    owner = relationship("UserModel", back_populates="tasks")
