@@ -7,7 +7,8 @@ from app.infrastructure.db_models import TaskModel
 from app.infrastructure.user_models import UserModel, RefreshTokenModel
 
 #Create table at startup
-Base.metadata.create_all(bind=engine)
+#This line is redundant due to Alembic
+#Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(task_router)
