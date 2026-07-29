@@ -37,7 +37,7 @@ def get_auth_service(repo: UserRepository = Depends(get_user_repository)):
 
 def _set_refresh_cookie(response: Response, refresh_token: str) -> None:
     response.set_cookie(
-        key=REFRESH_TOKEN_EXPIRE_DAYS,
+        key="refresh_token",
         value=refresh_token,
         httponly=True,
         secure=COOKIE_SECURE,
