@@ -36,7 +36,7 @@ class RefreshTokenModel(Base):
     SQLAlchemy RefreshToken Model for RefreshToken table
     we never store raw token but his sha256 hash
     """
-    __tablename__ = "refresh_token"
+    __tablename__ = "refresh_tokens"
     id = Column(Integer, primary_key=True, index=True)
     token_hash = Column(String(255), nullable=False, unique=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
