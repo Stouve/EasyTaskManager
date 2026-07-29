@@ -50,4 +50,4 @@ class RefreshTokenModel(Base):
         nullable=False
     )
 
-    user=relationship("UserModel", back_populates="refresh_token")
+    user=relationship("UserModel", back_populates="refresh_tokens")
