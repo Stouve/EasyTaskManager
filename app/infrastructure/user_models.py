@@ -9,7 +9,7 @@ class UserModel(Base):
     """
     SQLAlchemy User Model for User table
     """
-    __tablename__ = "user"
+    __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), nullable=False, unique=True, index=True)
     hashed_password = Column(String(255), nullable=False)
