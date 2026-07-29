@@ -1,7 +1,4 @@
 from datetime import datetime, timezone
-
-from sqlalchemy.sql.functions import user
-
 from app.core.user import User, RoleEnum
 from app.infrastructure.user_repository import UserRepository
 from app.security.password_hasher import hash_password, verify_password
