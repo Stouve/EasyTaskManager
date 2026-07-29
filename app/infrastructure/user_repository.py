@@ -66,7 +66,6 @@ class UserRepository:
     def store_refresh_token(self, user_id: int, raw_token:str, expires_at: datetime) -> Optional[RefreshTokenModel]:
         db_token=RefreshTokenModel(
             token_hash=self._hash_token(raw_token),
-            email=raw_token,
             user_id=user_id,
             expires_at=expires_at,
         )
