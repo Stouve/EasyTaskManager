@@ -38,7 +38,7 @@ def create_refresh_token(subject: str, role: str) -> tuple[str, datetime]:
         subject=subject,
         role=role,
         token_type=TokenType.REFRESH,
-        expires_at=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+        expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
     )
     return token, expires_at
 
@@ -52,7 +52,7 @@ def _create_token(subject: str, role: str, token_type: TokenType, expires_delta:
         "exp": now + expires_delta,
     }
 
-    return jwt.encode(payload, JWT_SECRET_KEY, algorithm="JWT_ALGORITHM")
+    return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
 
 def decode_token(token: str, expected_type: TokenType) -> dict:
     """
