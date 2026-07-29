@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.routers.task_router import router as task_router
-from app.routers.task_router import router as auth_router
+from app.routers.auth_router import router as auth_router
 from app.infrastructure.database import Base, engine
 from app.infrastructure.models import UserModel, RefreshTokenModel, TaskModel
 
