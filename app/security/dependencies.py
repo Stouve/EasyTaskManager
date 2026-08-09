@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from app.core.user import User, RoleEnum
@@ -7,10 +7,7 @@ from app.infrastructure.database import get_db
 from app.infrastructure.user_repository import UserRepository
 from app.security.jwt_handler import decode_token, TokenType, InvalidTokenException
 
-# tokenUrl pointe vers la route de login : c'est uniquement utilisé pour
-# générer le bouton "Authorize" dans la doc Swagger, FastAPI n'appelle
-# jamais cette URL lui-même.
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+security=HTTPBearer()
 
 def get_current_user(token: str = Depends(oauth2_scheme),
                      db: Session = Depends(get_db),) -> User:
