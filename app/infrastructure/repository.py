@@ -4,7 +4,9 @@ from typing import List, Optional
 from app.infrastructure.db_models import TaskModel
 from app.core.task import Task, TaskStatus
 from app.schemas.task_schema import TaskUpdate
+from sqlalchemy import asc, desc
 
+ALLOWED_SORT_FIELDS={"id","title","created_at","status"}
 
 class TaskRepository:
 
@@ -14,10 +16,11 @@ class TaskRepository:
     # --------------------------
     # CREATE
     # --------------------------
-    def add(self, title: str, description: str | None) -> Task:
+    def add(self, title: str, description: str | None, owner_id: int) -> Task:
         db_task=TaskModel(
             title=title,
             description=description,
+            owner_id=owner_id,
         )
 
         self.db.add(db_task)
@@ -27,19 +30,39 @@ class TaskRepository:
 
         return self._to_domain(db_task)
 
-        # --------------------------
-        # CONVERSION
-        # --------------------------
+    def get_all_tasks(self,
+                      owner_id: int,
+                      status: TaskStatus | None = None,
+                      page: int = 1,
+                      page_size: int = 10,
+                      sort_by: str = "created_at",
+                      order : str = "desc",
+                      ) -> tuple[List[Task], int]:
 
-    def get_all_tasks(self, status: TaskStatus | None = None) -> List[Task]:
-        query = self.db.query(TaskModel)
+        #If required field is not in allowed values we force created_at as default
+        if sort_by not in ALLOWED_SORT_FIELDS:
+            sort_by = "created_at"
+
+        query = self.db.query(TaskModel).filter(TaskModel.owner_id==owner_id)
 
         if status:
             query = query.filter(TaskModel.status == status)
 
-        tasks = query.all()
+        #check total before to calculate total pages from service
+        total= query.count()
 
-        return [self._to_domain(t) for t in tasks]
+        sort_column = getattr(TaskModel, sort_by)
+
+        query = query.order_by(desc(sort_column) if order == "desc" else asc(sort_column))
+
+        #offset : how elements are ignored before reading
+        offset = (page-1) * page_size
+
+        tasks = query.offset(offset).limit(page_size).all()
+
+        return [self._to_domain(t) for t in tasks], total
+
+
 
     def get_by_id(self,task_id:int)-> Task | None:
         task=self.db.query(TaskModel).filter(TaskModel.id == task_id).first()
@@ -97,4 +120,5 @@ class TaskRepository:
             description=model.description,
             status=model.status,
             created_at=model.created_at,
+            owner_id=model.owner_id,
         )

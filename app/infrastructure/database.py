@@ -5,11 +5,10 @@ import os
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL","sqlite:///./tasks.db")
+DATABASE_URL = os.getenv("DATABASE_URL")
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine = create_engine(DATABASE_URL, echo=DEBUG)
 
 #Create configured session class
 SessionLocal = sessionmaker(bind=engine)
