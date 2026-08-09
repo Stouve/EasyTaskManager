@@ -28,6 +28,7 @@ def get_tasks(status:TaskStatus | None = None,
               service : TaskService = Depends(get_task_service),
               current_user : User = Depends(get_current_user)):
     return service.list_tasks(owner_id=current_user.id,
+                              status=status,
                               page=pagination.page,
                               page_size=pagination.page_size,
                               sort_by=pagination.sort_by,
