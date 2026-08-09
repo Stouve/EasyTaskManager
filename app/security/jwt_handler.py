@@ -59,7 +59,7 @@ def decode_token(token: str, expected_type: TokenType) -> dict:
     Decode and verify token, token type
     """
     try:
-        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=JWT_ALGORITHM)
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
     except jwt.ExpiredSignatureError:
         raise InvalidTokenException("Token has expired")
     except jwt.InvalidTokenError:
