@@ -9,12 +9,14 @@ from app.security.jwt_handler import decode_token, TokenType, InvalidTokenExcept
 
 security=HTTPBearer()
 
-def get_current_user(token: str = Depends(oauth2_scheme),
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security),
                      db: Session = Depends(get_db),) -> User:
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                           detail="Could not validate credentials",
                                           headers={"WWW-Authenticate": "Bearer"},
     )
+
+    token=credentials.credentials
 
     try:
         payload=decode_token(token,expected_type=TokenType.ACCESS)
