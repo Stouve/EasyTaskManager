@@ -1,4 +1,35 @@
+# Environnement
 /.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+
+# Venv / dépendances
+.venv/
+venv/
 /requirements.txt.bak
+
+# Bases de données locales
 /tasks.db
 /test.db
+*.db
+*.sqlite3
+
+# IDE
+.idea/
+.vscode/
+
+# Tests / couverture
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
