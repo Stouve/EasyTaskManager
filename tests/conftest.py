@@ -26,3 +26,30 @@ def create_tables(engine):
     yield
     Base.metadata.drop_all(engine)
 
+# --------------------------
+# isolated session per test (auto rollback)
+# --------------------------
+@pytest.fixture(scope="function")
+def db_session(engine) -> Session:
+    connection = engine.connect()
+    transaction = connection.begin()
+    session = sessionmaker(bind=connection)()
+
+    yield session
+
+    session.close()
+    transaction.rollback()  # annule tout ce que le test a écrit
+    connection.close()
+
+
+# --------------------------
+# HTTP test client, with injected test DB
+# --------------------------
+@pytest.fixture(scope="function")
+def client(db_session):
+    def override_get_db():
+        yield db_session
+
+    app.dependency_overrides[get_db] = override_get_db
+    yield TestClient(app)
+    app.dependency_overrides.clear()  # clean after test
