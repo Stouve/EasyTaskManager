@@ -7,6 +7,9 @@ from fastapi.testclient import TestClient
 
 from app.infrastructure.database import Base, get_db
 from app.infrastructure import models
+from app.infrastructure.user_repository import UserRepository
+from app.core.auth_service import AuthService
+
 from app.main import app
 
 # --------------------------
