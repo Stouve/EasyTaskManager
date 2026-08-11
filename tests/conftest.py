@@ -19,3 +19,10 @@ def engine():
         connect_args={"check_same_thread": False}, # SQLite doesn't allow mutlithread by default
         poolclass=StaticPool, # keep same connection in memory between calls
     )
+
+@pytest.fixture(scope="session", autouse=True)
+def create_tables(engine):
+    Base.metadata.create_all(engine)
+    yield
+    Base.metadata.drop_all(engine)
+
