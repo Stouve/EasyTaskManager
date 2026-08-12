@@ -67,3 +67,16 @@ def test_user(auth_service):
     """Create test user directly from service(not via HTTP)"""
     user = auth_service.register(email="test@example.com", password="strongpassword123")
     return user
+
+@pytest.fixture(scope="function")
+def auth_headers(client, test_user):
+    """
+    Login via HTTP API(not via service) to get real JWT token
+    returns ready to inject headers in protected request
+    """
+    response = client.post("/auth/login", json={
+        "email": "test@example.com",
+        "password": "strongpassword123",
+    })
+    token = response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
