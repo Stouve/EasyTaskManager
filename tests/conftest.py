@@ -56,3 +56,14 @@ def client(db_session):
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
     app.dependency_overrides.clear()  # clean after test
+
+@pytest.fixture(scope="function")
+def auth_service(db_session) -> AuthService:
+    repo = UserRepository(db_session)
+    return AuthService(repo)
+
+@pytest.fixture(scope="function")
+def test_user(auth_service):
+    """Crée un utilisateur de test directement via le service (pas via HTTP)."""
+    user = auth_service.register(email="test@example.com", password="strongpassword123")
+    return user
