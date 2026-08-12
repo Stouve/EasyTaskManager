@@ -64,6 +64,6 @@ def auth_service(db_session) -> AuthService:
 
 @pytest.fixture(scope="function")
 def test_user(auth_service):
-    """Crée un utilisateur de test directement via le service (pas via HTTP)."""
+    """Create test user directly from service(not via HTTP)"""
     user = auth_service.register(email="test@example.com", password="strongpassword123")
     return user
