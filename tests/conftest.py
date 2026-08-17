@@ -15,7 +15,7 @@ from app.main import app
 # --------------------------
 # test Engine DB (once for test session)
 # --------------------------
-@pytest.fixture
+@pytest.fixture(scope="session")
 def engine():
     return create_engine(
         "sqlite:///:memory:",
