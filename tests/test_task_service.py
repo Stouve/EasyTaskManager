@@ -1,5 +1,5 @@
 import pytest
-from app.core.services import TaskService, InvalidTaskError
+from app.core.services import TaskService, InvalidTaskError, TaskAccessDeniedError
 from app.infrastructure.repository import TaskRepository
 from tests.conftest import db_session
 
@@ -46,4 +46,11 @@ def test_get_task_returns_task_when_owner_matches(db_session):
     assert fetched_task.id == created_task.id
     assert fetched_task.title == created_task.title
 
+def test_get_task_raises_access_denied_when_owner_mismatch(db_session):
+    repo = TaskRepository(db_session)
+    service=TaskService(repository=repo)
 
+    created_task=service.create_task(title="test_task", owner_id=1, description="test_task")
+
+    with pytest.raises(TaskAccessDeniedError):
+        fetched_task = service.get_task(task_id=1, owner_id=2)
