@@ -35,5 +35,15 @@ def test_create_task_success(db_session):
     assert task.description == "test_task"
     assert task.owner_id == 1
 
+def test_get_task_returns_task_when_owner_matches(db_session):
+    repo = TaskRepository(db_session)
+    service=TaskService(repository=repo)
+
+    created_task=service.create_task(title="test_task", owner_id=1, description="test_task")
+
+    fetched_task = service.get_task(task_id=1, owner_id=1)
+
+    assert fetched_task.id == created_task.id
+    assert fetched_task.title == created_task.title
 
 
