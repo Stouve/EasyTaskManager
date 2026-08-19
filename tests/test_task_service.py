@@ -20,4 +20,20 @@ def test_create_task_with_title_too_long_raises_error():
     with pytest.raises(InvalidTaskError):
         service.create_task(title=too_long, owner_id=1)
 
+# ==============================
+# Tests with DB using conftest fixture
+# ==============================
+
+def test_create_task_success(db_session):
+    repo = TaskRepository(db_session)
+    service=TaskService(repository=repo)
+
+    task = service.create_task(title="test_task", owner_id=1, description="test_task")
+
+    assert task.id is not None
+    assert task.title == "test_task"
+    assert task.description == "test_task"
+    assert task.owner_id == 1
+
+
 
