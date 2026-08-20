@@ -1,7 +1,6 @@
 import pytest
 from app.core.services import TaskService, InvalidTaskError, TaskAccessDeniedError, TaskNotFoundError
 from app.infrastructure.repository import TaskRepository
-from tests.conftest import db_session
 
 # ==============================
 # Validation Tests (no real DB needed)
