@@ -2,7 +2,9 @@ import pytest
 
 from app.security.password_hasher import verify_password
 from app.core.user import RoleEnum
-from app.core.auth_service import EmailAlreadyExistsError, InvalidCredentialsError, InactiveUserError
+from app.core.auth_service import EmailAlreadyExistsError, InvalidCredentialsError
+from app.security.jwt_handler import decode_token, TokenType, InvalidTokenException, create_refresh_token
+
 
 def test_register_creates_user(auth_service):
 
@@ -46,3 +48,13 @@ def test_authenticate_with_wrong_user_raises_error(auth_service):
 
     with pytest.raises(InvalidCredentialsError):
         user=auth_service.authenticate("fake@example.com", password)
+
+def test_decode_token_with_invalid_string_raises_error(auth_service):
+    garbage_token="not.a.valid.token"
+    with pytest.raises(InvalidTokenException):
+        decode_token(garbage_token,expected_type=TokenType.ACCESS)
+
+def test_decode_token_with_wrong_type_raises_error(auth_service):
+    token,_=create_refresh_token(subject="test",role="user")
+    with pytest.raises(InvalidTokenException):
+        decode_token(token,expected_type=TokenType.ACCESS)
