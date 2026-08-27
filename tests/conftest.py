@@ -1,4 +1,5 @@
 import pytest
+import httpx
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
@@ -49,12 +50,17 @@ def db_session(engine) -> Session:
 # HTTP test client, with injected test DB
 # --------------------------
 @pytest.fixture(scope="function")
-def client(db_session):
+async def client(db_session):
     def override_get_db():
         yield db_session
 
     app.dependency_overrides[get_db] = override_get_db
-    yield TestClient(app)
+    #creates bridge to call requests on memory not from network, no need to run server for tests
+    transport = httpx.AsyncHTTPTransport(app=app)
+    #creates http test client
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
+
     app.dependency_overrides.clear()  # clean after test
 
 @pytest.fixture(scope="function")
