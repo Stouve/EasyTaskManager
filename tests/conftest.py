@@ -4,7 +4,6 @@ import httpx
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
-from fastapi.testclient import TestClient
 
 from app.infrastructure.database import Base, get_db
 from app.infrastructure import models
@@ -75,12 +74,12 @@ def test_user(auth_service):
     return user
 
 @pytest.fixture(scope="function")
-def auth_headers(client, test_user):
+async def auth_headers(client, test_user):
     """
     Login via HTTP API(not via service) to get real JWT token
     returns ready to inject headers in protected request
     """
-    response = client.post("/auth/login", json={
+    response = await client.post("/auth/login", json={
         "email": "test@example.com",
         "password": "strongpassword123",
     })
