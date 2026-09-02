@@ -25,3 +25,32 @@ async def test_register_via_api_creates_user(client):
     assert "id" in data
 
     #Never check that pwd or hashed pwd is on response, UserOut schema doesn't have pwd field to avoid sensitive data leak
+
+async def test_login_returns_access_token(client):
+
+    # Arrange : We need existing user from DB to login so we create it via true HTTP request no via authservice
+
+    register_payload = {
+        "email": "login-test@example.com",
+        "password": "strongpassword123",
+    }
+
+    # Act : login with same ids
+    await client.post("/auth/register", json=register_payload)
+
+    login_payload = {
+        "email": "login-test@example.com",
+        "password": "strongpassword123",
+    }
+
+    response = await client.post("/auth/login", json=login_payload)
+
+    #No explicit status_code, so we check 200 by default for a POST request
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
+    #Check header.payload.signature : 3 separate parts separated by dots
+    assert data["access_token"].count(".") == 2
