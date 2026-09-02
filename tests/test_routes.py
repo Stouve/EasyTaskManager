@@ -54,3 +54,22 @@ async def test_login_returns_access_token(client):
     assert data["token_type"] == "bearer"
     #Check header.payload.signature : 3 separate parts separated by dots
     assert data["access_token"].count(".") == 2
+
+async def test_create_task_with_valid_token(client,auth_headers):
+
+    #Arrange
+    task_payload = {
+        "title":"test",
+        "description":"test",
+    }
+
+    response=await client.post("/tasks/", json=task_payload, headers=auth_headers)
+
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["title"] == task_payload["title"]
+    assert data["description"] == task_payload["description"]
+    assert data["status"] == "pending"
+    assert "id" in data
+    assert "created_at" in data
