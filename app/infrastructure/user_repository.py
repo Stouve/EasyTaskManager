@@ -72,30 +72,30 @@ class UserRepository:
         self.db.add(db_token)
         self.db.commit()
 
-def get_valid_refresh_token(self,raw_token:str) -> Optional[RefreshTokenModel]:
+    def get_valid_refresh_token(self,raw_token:str) -> Optional[RefreshTokenModel]:
 
-   token_hash=self._hash_token(raw_token)
-   return(
-       self.db.query(RefreshTokenModel).filter(
-           RefreshTokenModel.token_hash == token_hash,
-           RefreshTokenModel.revoked.is_(False)
-       ).first()
-   )
+       token_hash=self._hash_token(raw_token)
+       return(
+           self.db.query(RefreshTokenModel).filter(
+               RefreshTokenModel.token_hash == token_hash,
+               RefreshTokenModel.revoked.is_(False)
+           ).first()
+       )
 
-def revoke_refresh_token(self, raw_token:str) -> None:
-    token_hash=self._hash_token(raw_token)
-    db_token=self.db.query(RefreshTokenModel).filter(RefreshTokenModel.token_hash == token_hash).first()
+    def revoke_refresh_token(self, raw_token:str) -> None:
+        token_hash=self._hash_token(raw_token)
+        db_token=self.db.query(RefreshTokenModel).filter(RefreshTokenModel.token_hash == token_hash).first()
 
-    if db_token:
-        db_token.revoked = True
+        if db_token:
+            db_token.revoked = True
+            self.db.commit()
+
+    def revoke_all_refresh_tokens_for_user(self, user_id:int) -> None:
+
+        self.db.query(RefreshTokenModel).filter(RefreshTokenModel.user_id == user_id,
+                                                RefreshTokenModel.revoked.is_(False)
+                                                ).update({"revoked": True})
         self.db.commit()
-
-def revoke_all_refresh_tokens_for_user(self, user_id:int) -> None:
-
-    self.db.query(RefreshTokenModel).filter(RefreshTokenModel.user_id == user_id,
-                                            RefreshTokenModel.revoked.is_(False)
-                                            ).update({"revoked": True})
-    self.db.commit()
 
 
 

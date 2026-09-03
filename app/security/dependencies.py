@@ -42,7 +42,7 @@ def require_role(required_role: RoleEnum):
     Usage : @router.get(..., dependencies=[Depends(require_role(RoleEnum.ADMIN))])
     """
     def _check_role(current_user: User = Depends(get_current_user)) -> User:
-        if current_user.role !=require_role:
+        if current_user.role !=required_role:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                                 detail="Insufficient permissions",
                                 )

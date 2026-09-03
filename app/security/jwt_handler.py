@@ -15,7 +15,7 @@ if not JWT_SECRET_KEY:
     raise RuntimeError("JWT_SECRET_KEY is not set in environment variables")
 
 class TokenType(str, Enum):
-    ACCESS = "access",
+    ACCESS = "access"
     REFRESH = "refresh"
 
 class InvalidTokenException(Exception):
