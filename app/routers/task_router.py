@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
 from app.core.task import TaskStatus
@@ -35,7 +35,7 @@ def get_tasks(status:TaskStatus | None = None,
                               order=pagination.order,
                               )
 
-@router.post("/", response_model=TaskOut)
+@router.post("/", response_model=TaskOut, status_code=status.HTTP_201_CREATED)
 def create_task(task: TaskCreate,
                 service : TaskService = Depends(get_task_service),
                 current_user : User = Depends(get_current_user)
