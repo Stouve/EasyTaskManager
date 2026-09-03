@@ -73,3 +73,14 @@ async def test_create_task_with_valid_token(client,auth_headers):
     assert data["status"] == "pending"
     assert "id" in data
     assert "created_at" in data
+
+async def test_create_task_without_token_returns_401(client):
+
+    # Arrange
+    task_payload = {
+        "title": "test",
+        "description": "test",
+    }
+
+    response = await client.post("/tasks/", json=task_payload)
+    assert response.status_code == 401
