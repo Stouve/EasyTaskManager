@@ -65,7 +65,7 @@ async def test_create_task_with_valid_token(client,auth_headers):
 
     response=await client.post("/tasks/", json=task_payload, headers=auth_headers)
 
-    assert response.status_code == 200
+    assert response.status_code == 201
 
     data = response.json()
     assert data["title"] == task_payload["title"]
