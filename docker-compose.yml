@@ -1,4 +1,3 @@
-Docker compose · YML
 services:
   db:
     image: postgres:18.4-alpine
