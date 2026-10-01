@@ -3,7 +3,7 @@ name = "easytaskmanager"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Stouve",email = "oxide28@gmail.com"}
+    {name = "Stouve",email = "steve_ratier@yahoo.fr"}
 ]
 requires-python = ">=3.13"
 dependencies = [

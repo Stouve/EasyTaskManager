@@ -1,0 +1,41 @@
+# Environnement (secrets - never in image)
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+
+# Venv
+.venv/
+venv/
+/requirements.txt.bak
+
+# local databases
+*.db
+*.sqlite3
+
+# IDE
+.idea/
+.vscode/
+
+# Tests / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker itself (not needed in image)
+Dockerfile
+docker-compose.yml

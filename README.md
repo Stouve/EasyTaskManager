@@ -1,21 +1,7 @@
-# EasyTaskManager API
-
+# Task Manager API
 REST API to manage tasks with JWT authentication. Built with FastAPI, PostgreSQL & SQLAlchemy.
 
-## Features
-
-- ✅ Task management (CRUD)
-- ✅ JWT Authentication (access + refresh tokens)
-- ✅ Role-based access control (user / admin)
-- ✅ Per-user task isolation (users only see their own tasks)
-- ✅ Pagination & sorting on task listing
-- ✅ Refresh token stored server-side (revocation support)
-- ✅ Refresh token in httpOnly cookie (XSS protection)
-- ✅ Password hashing with Argon2 (via pwdlib)
-- ✅ Database migrations with Alembic
-
-## Tech Stack
-
+## Tech Stack 
 | Layer | Technology |
 |---|---|
 | Framework | FastAPI |
@@ -25,37 +11,39 @@ REST API to manage tasks with JWT authentication. Built with FastAPI, PostgreSQL
 | Auth | PyJWT + pwdlib (Argon2) |
 | Dependency management | Poetry |
 
-## Project Structure
 
-```
-app/
-├── core/               # Business logic (no framework dependency)
-│   ├── task.py         # Task domain entity
-│   ├── user.py         # User domain entity & roles
-│   ├── services.py     # Task service
-│   └── auth_service.py # Auth service (register, login, tokens)
-├── infrastructure/     # Database & persistence
-│   ├── database.py     # Engine & session
-│   ├── db_models.py    # SQLAlchemy TaskModel
-│   ├── user_models.py  # SQLAlchemy UserModel & RefreshTokenModel
-│   ├── models.py       # Centralized model imports (required for Alembic)
-│   ├── repository.py   # Task repository
-│   └── user_repository.py # User & refresh token repository
-├── routers/            # HTTP layer
-│   ├── task_router.py  # /tasks routes (protected)
-│   └── auth_router.py  # /auth routes
-├── schemas/            # Pydantic schemas (data validation)
-│   ├── task_schema.py
-│   ├── user_schema.py
-│   └── pagination.py
-├── security/           # Auth utilities
-│   ├── jwt_handler.py  # JWT encode/decode (PyJWT)
-│   ├── password_hasher.py # Argon2 hashing (pwdlib)
-│   └── dependencies.py # FastAPI dependencies (get_current_user, require_role)
-└── main.py
-```
+## Quick start (Docker)
+The fastest way to run this project(no local python or PostgreSQL install needed)
 
-## Installation
+### Prerequisites
+-  Docker Desktop installed and running
+
+### Run
+
+```bash
+git clone https://github.com/Stouve/EasyTaskManager
+cd EasyTaskManager
+docker compose up --build
+```
+On first run, Docker will:
+
+1. Pull a PostgreSQL 18 image and start the database
+2. Build the API image and install dependencies
+3. Automatically run all Alembic migrations
+4. Start the API with hot-reload enabled
+
+Once you see **Application startup complete**. in the logs, open http://localhost:8000/docs to try the API via the interactive Swagger UI.
+
+To stop everything:
+
+```bash
+docker compose down
+```
+(add -v if you also want to wipe the database volume and start fresh)
+
+>Note: the credentials in docker-compose.yml are placeholders for local development only — never used in any real deployment.
+
+## Manual Setup(without Docker)
 
 ### Prerequisites
 
@@ -115,72 +103,55 @@ poetry run alembic upgrade head
 poetry run uvicorn app.main:app --reload
 ```
 
-API available at `http://localhost:8000`  
-Interactive docs at `http://localhost:8000/docs`
+## Features
 
-## API Endpoints
+- ✅ Task management (CRUD)
+- ✅ JWT Authentication (access + refresh tokens)
+- ✅ Role-based access control (user / admin)
+- ✅ Per-user task isolation (users only see their own tasks)
+- ✅ Pagination & sorting on task listing
+- ✅ Refresh token stored server-side (revocation support)
+- ✅ Refresh token in httpOnly cookie (XSS protection)
+- ✅ Password hashing with Argon2 (via pwdlib)
+- ✅ Database migrations with Alembic
 
-### Auth
+## Endpoints
 
-| Method | Route | Description | Auth required |
-|--------|-------|-------------|---------------|
-| POST | `/auth/register` | Create a new account | No |
-| POST | `/auth/login` | Login, returns access token (refresh token in httpOnly cookie) | No |
-| POST | `/auth/refresh` | Get a new access token from refresh token cookie | No |
-| POST | `/auth/logout` | Revoke refresh token | No |
-| GET | `/auth/me` | Get current user info | Yes |
+| Method | Route | Description         |
+|--------|---|---------------------|
+| GET    | `/tasks` | List all tasks      |
+| POST   | `/tasks` | Create Task         |
+| GET    | `/tasks/{id}` | Get one Task        |
+| PUT    | `/tasks/{id}` | Full Update Task    |
+| PATCH  | `/tasks/{id}` | Partial Update Task |
+| DELETE | `/tasks/{id}` | Delete Task         |
 
-### Tasks
-
-All task routes require a valid `Authorization: Bearer <access_token>` header.  
-Each user can only access their own tasks.
-
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/tasks/` | List tasks (paginated, filterable by status) |
-| POST | `/tasks/` | Create a task |
-| GET | `/tasks/{id}` | Get a task by ID |
-| PUT | `/tasks/{id}` | Full update |
-| PATCH | `/tasks/{id}` | Partial update |
-| DELETE | `/tasks/{id}` | Delete a task |
-
-### Query parameters for `GET /tasks/`
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `status` | `pending` \| `done` | — | Filter by status |
-| `page` | int | 1 | Page number |
-| `page_size` | int | 10 | Items per page (max 100) |
-| `sort_by` | string | `created_at` | Sort field |
-| `order` | `asc` \| `desc` | `desc` | Sort order |
-
-## Authentication Flow
+## Project Structure
 
 ```
-POST /auth/register  →  account created
-POST /auth/login     →  access_token (JSON) + refresh_token (httpOnly cookie)
-                        ↓
-Authorization: Bearer <access_token>  →  protected routes
-                        ↓ (access token expires after 15 min)
-POST /auth/refresh   →  new access_token (refresh token cookie sent automatically)
-                        ↓
-POST /auth/logout    →  refresh token revoked in DB + cookie deleted
-```
-
-**Security choices:**
-- Access token: short-lived (15 min), travels in `Authorization` header
-- Refresh token: long-lived (7 days), stored in httpOnly cookie (not accessible via JS), hashed in DB (SHA-256)
-- Passwords hashed with Argon2 (OWASP recommended, winner of Password Hashing Competition 2015)
-
-## Development
-
-### Run in debug mode
-
-Set `DEBUG=True` in `.env` to enable SQLAlchemy query logging.
-
-### Generate a new migration after model changes
-
-```bash
-poetry run alembic revision --autogenerate -m "description of change"
-poetry run alembic upgrade head
+app/
+├── core/               # Business logic (no framework dependency)
+│   ├── task.py         # Task domain entity
+│   ├── user.py         # User domain entity & roles
+│   ├── services.py     # Task service
+│   └── auth_service.py # Auth service (register, login, tokens)
+├── infrastructure/     # Database & persistence
+│   ├── database.py     # Engine & session
+│   ├── db_models.py    # SQLAlchemy TaskModel
+│   ├── user_models.py  # SQLAlchemy UserModel & RefreshTokenModel
+│   ├── models.py       # Centralized model imports (required for Alembic)
+│   ├── repository.py   # Task repository
+│   └── user_repository.py # User & refresh token repository
+├── routers/            # HTTP layer
+│   ├── task_router.py  # /tasks routes (protected)
+│   └── auth_router.py  # /auth routes
+├── schemas/            # Pydantic schemas (data validation)
+│   ├── task_schema.py
+│   ├── user_schema.py
+│   └── pagination.py
+├── security/           # Auth utilities
+│   ├── jwt_handler.py  # JWT encode/decode (PyJWT)
+│   ├── password_hasher.py # Argon2 hashing (pwdlib)
+│   └── dependencies.py # FastAPI dependencies (get_current_user, require_role)
+└── main.py
 ```
