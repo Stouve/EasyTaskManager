@@ -46,39 +46,58 @@ docker compose down
 ## Manual Setup(without Docker)
 
 ### Prerequisites
-- Python 3.11+
-- PostgreSQL
+
+- Python 3.13+
+- PostgreSQL 18+
 - Poetry
 
 ### Setup
 
-GIT
+**1 — Clone the repository**
+
 ```bash
 git clone https://github.com/Stouve/EasyTaskManager
+cd EasyTaskManager
 poetry install
 ```
-POSTGRESQL
 
-Fill setup.sql with user/pwd and run 
-```
+**2 — Set up PostgreSQL**
+
+Fill `setup.sql` with your credentials and run:
+
+```bash
 psql -U postgres -f setup.sql
 ```
 
-Copy `.env.example` into `.env` et fill with user/pwd :
+**3 — Configure environment variables**
+
+Copy `.env.example` to `.env` and fill in your values:
 
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/tasks_db
+
+JWT_SECRET_KEY=your_secret_key_here
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=15
+REFRESH_TOKEN_EXPIRE_DAYS=7
+
+DEBUG=False
+COOKIE_SECURE=False  # Set to True in production (HTTPS only)
 ```
 
-> Previously SQLite : `sqlite:///./tasks.db`
+Generate a secure JWT secret key:
 
-### Migrations
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(64))"
+```
+
+**4 — Run database migrations**
 
 ```bash
 poetry run alembic upgrade head
 ```
 
-### Run
+**5 — Start the server**
 
 ```bash
 poetry run uvicorn app.main:app --reload
