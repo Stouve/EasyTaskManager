@@ -1,12 +1,16 @@
 # Task Manager API
-API REST to manage Tasks. Built with FastAPI, PostgreSQL & SQLAlchemy
+REST API to manage tasks with JWT authentication. Built with FastAPI, PostgreSQL & SQLAlchemy.
 
 ## Tech Stack 
-- FastAPI
-- PostgreSQL
-- SQLAlchemy
-- Alembic
-- Poetry
+| Layer | Technology |
+|---|---|
+| Framework | FastAPI |
+| ORM | SQLAlchemy |
+| Database | PostgreSQL |
+| Migrations | Alembic |
+| Auth | PyJWT + pwdlib (Argon2) |
+| Dependency management | Poetry |
+
 
 ## Quick start (Docker)
 The fastest way to run this project(no local python or PostgreSQL install needed)
@@ -80,6 +84,18 @@ poetry run alembic upgrade head
 poetry run uvicorn app.main:app --reload
 ```
 
+## Features
+
+- ✅ Task management (CRUD)
+- ✅ JWT Authentication (access + refresh tokens)
+- ✅ Role-based access control (user / admin)
+- ✅ Per-user task isolation (users only see their own tasks)
+- ✅ Pagination & sorting on task listing
+- ✅ Refresh token stored server-side (revocation support)
+- ✅ Refresh token in httpOnly cookie (XSS protection)
+- ✅ Password hashing with Argon2 (via pwdlib)
+- ✅ Database migrations with Alembic
+
 ## Endpoints
 
 | Method | Route | Description         |
@@ -90,3 +106,33 @@ poetry run uvicorn app.main:app --reload
 | PUT    | `/tasks/{id}` | Full Update Task    |
 | PATCH  | `/tasks/{id}` | Partial Update Task |
 | DELETE | `/tasks/{id}` | Delete Task         |
+
+## Project Structure
+
+```
+app/
+├── core/               # Business logic (no framework dependency)
+│   ├── task.py         # Task domain entity
+│   ├── user.py         # User domain entity & roles
+│   ├── services.py     # Task service
+│   └── auth_service.py # Auth service (register, login, tokens)
+├── infrastructure/     # Database & persistence
+│   ├── database.py     # Engine & session
+│   ├── db_models.py    # SQLAlchemy TaskModel
+│   ├── user_models.py  # SQLAlchemy UserModel & RefreshTokenModel
+│   ├── models.py       # Centralized model imports (required for Alembic)
+│   ├── repository.py   # Task repository
+│   └── user_repository.py # User & refresh token repository
+├── routers/            # HTTP layer
+│   ├── task_router.py  # /tasks routes (protected)
+│   └── auth_router.py  # /auth routes
+├── schemas/            # Pydantic schemas (data validation)
+│   ├── task_schema.py
+│   ├── user_schema.py
+│   └── pagination.py
+├── security/           # Auth utilities
+│   ├── jwt_handler.py  # JWT encode/decode (PyJWT)
+│   ├── password_hasher.py # Argon2 hashing (pwdlib)
+│   └── dependencies.py # FastAPI dependencies (get_current_user, require_role)
+└── main.py
+```
