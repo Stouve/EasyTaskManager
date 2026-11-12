@@ -1,8 +1,9 @@
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
 from app.core.user import RoleEnum
+
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -15,6 +16,7 @@ class UserCreate(BaseModel):
             raise ValueError("Password must be at least 8 characters")
         return value
 
+
 class UserOut(BaseModel):
     id: int
     email: EmailStr
@@ -25,15 +27,18 @@ class UserOut(BaseModel):
     # this config is needed to create pydantic schema from an sqlalchemy or any object with attributes instead of dictionary
     model_config = ConfigDict(from_attributes=True)
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
 
 class AccessTokenResponse(BaseModel):
     """
     Response from login/refresh, only access token is exposed in JSON body response.
     Refresh token is in cookie httpOnly on server side, never readable from client side
     """
+
     access_token: str
-    #HTTP standard, keyword bearer tell how the server should read the token
+    # HTTP standard, keyword bearer tell how the server should read the token
     token_type: str = "bearer"

@@ -1,23 +1,24 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Boolean
-from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
-from app.infrastructure.database import Base
+
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
 from app.core.user import RoleEnum
+from app.infrastructure.database import Base
 
 
 class UserModel(Base):
     """
     SQLAlchemy User Model for User table
     """
+
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), nullable=False, unique=True, index=True)
     hashed_password = Column(String(255), nullable=False)
 
     role = Column(
-        Enum(RoleEnum, name="roleenum"),
-        default=RoleEnum.USER,
-        nullable=False
+        Enum(RoleEnum, name="roleenum"), default=RoleEnum.USER, nullable=False
     )
 
     is_active = Column(Boolean, default=True, nullable=False)
@@ -25,17 +26,23 @@ class UserModel(Base):
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
-        nullable=False
+        nullable=False,
     )
 
-    tasks = relationship("TaskModel", back_populates="owner", cascade="all, delete-orphan")
-    refresh_tokens = relationship("RefreshTokenModel", back_populates="user",cascade="all, delete-orphan")
+    tasks = relationship(
+        "TaskModel", back_populates="owner", cascade="all, delete-orphan"
+    )
+    refresh_tokens = relationship(
+        "RefreshTokenModel", back_populates="user", cascade="all, delete-orphan"
+    )
+
 
 class RefreshTokenModel(Base):
     """
     SQLAlchemy RefreshToken Model for RefreshToken table
     we never store raw token but his sha256 hash
     """
+
     __tablename__ = "refresh_tokens"
     id = Column(Integer, primary_key=True, index=True)
     token_hash = Column(String(255), nullable=False, unique=True, index=True)
@@ -47,7 +54,7 @@ class RefreshTokenModel(Base):
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
-        nullable=False
+        nullable=False,
     )
 
-    user=relationship("UserModel", back_populates="refresh_tokens")
+    user = relationship("UserModel", back_populates="refresh_tokens")

@@ -1,7 +1,8 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 load_dotenv()
 
@@ -10,10 +11,10 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 engine = create_engine(DATABASE_URL, echo=DEBUG)
 
-#Create configured session class
+# Create configured session class
 SessionLocal = sessionmaker(bind=engine)
 
-#Create base class for all models
+# Create base class for all models
 Base = declarative_base()
 
 
@@ -23,4 +24,3 @@ def get_db():
         yield db
     finally:
         db.close()
-

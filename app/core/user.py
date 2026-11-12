@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
+
 class RoleEnum(str, Enum):
     USER = "user"
     ADMIN = "admin"
@@ -20,6 +21,7 @@ class User:
         created_at (datetime) : date and time when the user was created
         is_active (bool) : whether the user is active or not
     """
+
     id: int | None
     email: str
     hashed_password: str
