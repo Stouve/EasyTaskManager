@@ -1,29 +1,129 @@
 # EasyTaskManager API
 
-REST API to manage tasks with JWT authentication. Built with FastAPI, PostgreSQL & SQLAlchemy.
+A REST API for task management built with FastAPI and PostgreSQL. The project includes JWT authentication and role-based access control. The application is organized into separate layers for API routes, business logic, and database access.
+## Tech Stack
+
+| Component | Technology |
+|---|---|
+| Language | Python 3.13 |
+| API framework | FastAPI |
+| Database | PostgreSQL |
+| ORM | SQLAlchemy 2.0 |
+| Migrations | Alembic |
+| Validation | Pydantic |
+| Authentication | PyJWT |
+| Password hashing | pwdlib (Argon2) |
+| Dependency management | Poetry |
+| Containerization | Docker & Docker Compose |
+
+
+## Getting Started
+
+### Run with Docker
+
+**Prerequisites:** Docker Desktop installed and running.
+
+Clone the repository and start the application:
+
+```bash
+git clone https://github.com/Stouve/EasyTaskManager.git
+cd EasyTaskManager
+docker compose up --build
+```
+
+Docker Compose starts the PostgreSQL database and the API. On initial setup, the application image is built and the database migrations are applied.
+
+Once the application is running, the interactive API documentation is available at:
+
+- **Swagger UI:** http://localhost:8000/docs
+- **ReDoc:** http://localhost:8000/redoc
+
+To stop the application:
+
+```bash
+docker compose down
+```
+
+To also remove the database volume and its stored data:
+
+```bash
+docker compose down -v
+```
+
+> The credentials configured in `docker-compose.yml` are for local development only.
+
+### Run locally
+
+**Prerequisites:**
+- Python 3.13+
+- PostgreSQL 18+
+- Poetry
+
+**1. Install dependencies**
+
+```bash
+git clone https://github.com/Stouve/EasyTaskManager.git
+cd EasyTaskManager
+poetry install
+```
+
+**2. Configure PostgreSQL**
+
+Set up a PostgreSQL database and user using `setup.sql`, adapting the script to your local configuration. Run it with:
+
+```bash
+psql -U postgres -f setup.sql
+```
+
+**3. Configure environment variables**
+
+Copy `.env.example` to `.env` and update the values for your environment.
+
+```dotenv
+DATABASE_URL=postgresql://user:password@localhost:5432/tasks_db
+
+JWT_SECRET_KEY=your_secret_key_here
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=15
+REFRESH_TOKEN_EXPIRE_DAYS=7
+
+DEBUG=False
+COOKIE_SECURE=False
+```
+
+Generate a secret key for local development:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(64))"
+```
+
+Set `COOKIE_SECURE=True` when deploying behind HTTPS. Use appropriate secrets and configuration for any production deployment.
+
+**4. Apply database migrations**
+
+```bash
+poetry run alembic upgrade head
+```
+
+**5. Start the API**
+
+```bash
+poetry run uvicorn app.main:app --reload
+```
+
+API available at `http://localhost:8000`  
+API documentation is available at http://localhost:8000/docs.
 
 ## Features
 
-- ✅ Task management (CRUD)
-- ✅ JWT Authentication (access + refresh tokens)
-- ✅ Role-based access control (user / admin)
-- ✅ Per-user task isolation (users only see their own tasks)
-- ✅ Pagination & sorting on task listing
-- ✅ Refresh token stored server-side (revocation support)
-- ✅ Refresh token in httpOnly cookie (XSS protection)
-- ✅ Password hashing with Argon2 (via pwdlib)
-- ✅ Database migrations with Alembic
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | FastAPI |
-| ORM | SQLAlchemy |
-| Database | PostgreSQL |
-| Migrations | Alembic |
-| Auth | PyJWT + pwdlib (Argon2) |
-| Dependency management | Poetry |
+- **Task management:** Create, retrieve, update, and delete tasks.
+- **Authentication:** User registration and login using JWT access and refresh tokens.
+- **Role-based access control:** Separate permissions for users and administrators.
+- **User isolation:** Users can access only their own tasks.
+- **Pagination and sorting:** Support for paginated task listings.
+- **Token revocation:** Refresh tokens are stored server-side and can be revoked.
+- **Password security:** Passwords are hashed using Argon2.
+- **Database migrations:** Schema changes are managed with Alembic.
 
 ## Project Structure
 
@@ -54,69 +154,6 @@ app/
 │   └── dependencies.py # FastAPI dependencies (get_current_user, require_role)
 └── main.py
 ```
-
-## Installation
-
-### Prerequisites
-
-- Python 3.13+
-- PostgreSQL 18+
-- Poetry
-
-### Setup
-
-**1 — Clone the repository**
-
-```bash
-git clone https://github.com/Stouve/EasyTaskManager
-cd EasyTaskManager
-poetry install
-```
-
-**2 — Set up PostgreSQL**
-
-Fill `setup.sql` with your credentials and run:
-
-```bash
-psql -U postgres -f setup.sql
-```
-
-**3 — Configure environment variables**
-
-Copy `.env.example` to `.env` and fill in your values:
-
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/tasks_db
-
-JWT_SECRET_KEY=your_secret_key_here
-JWT_ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=15
-REFRESH_TOKEN_EXPIRE_DAYS=7
-
-DEBUG=False
-COOKIE_SECURE=False  # Set to True in production (HTTPS only)
-```
-
-Generate a secure JWT secret key:
-
-```bash
-python -c "import secrets; print(secrets.token_urlsafe(64))"
-```
-
-**4 — Run database migrations**
-
-```bash
-poetry run alembic upgrade head
-```
-
-**5 — Start the server**
-
-```bash
-poetry run uvicorn app.main:app --reload
-```
-
-API available at `http://localhost:8000`  
-Interactive docs at `http://localhost:8000/docs`
 
 ## API Endpoints
 
