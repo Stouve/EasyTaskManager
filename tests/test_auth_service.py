@@ -35,28 +35,28 @@ def test_register_with_existing_email_raises_error(auth_service):
 
     email = "test@example.com"
     password = "strongpassword123"
-    user_created = auth_service.register(email, password)
+    auth_service.register(email, password)
 
     with pytest.raises(EmailAlreadyExistsError):
-        user_created = auth_service.register(email, "anotherpassword456")
+        auth_service.register(email, "anotherpassword456")
 
 
 def test_authenticate_with_wrong_password_raises_error(auth_service):
     email = "test@example.com"
     password = "strongpassword123"
-    user_created = auth_service.register(email, password)
+    auth_service.register(email, password)
 
     with pytest.raises(InvalidCredentialsError):
-        user = auth_service.authenticate(email, "wrong_password")
+        auth_service.authenticate(email, "wrong_password")
 
 
 def test_authenticate_with_wrong_user_raises_error(auth_service):
     email = "test@example.com"
     password = "strongpassword123"
-    user_created = auth_service.register(email, password)
+    auth_service.register(email, password)
 
     with pytest.raises(InvalidCredentialsError):
-        user = auth_service.authenticate("fake@example.com", password)
+        auth_service.authenticate("fake@example.com", password)
 
 
 def test_decode_token_with_invalid_string_raises_error(auth_service):

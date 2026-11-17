@@ -84,7 +84,10 @@ class AuthService:
 
     def refresh_access_token(self, raw_refresh_token: str) -> str:
         """
-        verify refresh token(signature, type, validity) and generates new access token, refresh token is not renewed
+        Verify refresh token(signature, type, validity)
+        and generate new access token.
+
+        The refresh token is not renewed
         """
         try:
             payload = decode_token(raw_refresh_token, expected_type=TokenType.REFRESH)

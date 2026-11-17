@@ -56,7 +56,7 @@ async def client(db_session):
         yield db_session
 
     app.dependency_overrides[get_db] = override_get_db
-    # creates bridge to call requests on memory not from network, no need to run server for tests
+    # creates bridge to call requests on memory not from network for test
     transport = httpx.ASGITransport(app=app)
     # creates http test client
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:

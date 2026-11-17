@@ -63,12 +63,12 @@ def test_get_task_raises_access_denied_when_owner_mismatch(db_session):
     repo = TaskRepository(db_session)
     service = TaskService(repository=repo)
 
-    created_task = service.create_task(
+    service.create_task(
         title="test_task", owner_id=1, description="test_task"
     )
 
     with pytest.raises(TaskAccessDeniedError):
-        fetched_task = service.get_task(task_id=1, owner_id=2)
+        service.get_task(task_id=1, owner_id=2)
 
 
 def test_get_task_raises_not_found_when_task_does_not_exist(db_session):
@@ -76,4 +76,4 @@ def test_get_task_raises_not_found_when_task_does_not_exist(db_session):
     service = TaskService(repository=repo)
 
     with pytest.raises(TaskNotFoundError):
-        fetched_task = service.get_task(task_id=999, owner_id=1)
+        service.get_task(task_id=999, owner_id=1)

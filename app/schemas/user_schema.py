@@ -24,7 +24,8 @@ class UserOut(BaseModel):
     is_active: bool
     created_at: datetime
 
-    # this config is needed to create pydantic schema from an sqlalchemy or any object with attributes instead of dictionary
+    # Create pydantic schema from object with attributes instead of dictionary
+
     model_config = ConfigDict(from_attributes=True)
 
 

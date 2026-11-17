@@ -98,8 +98,10 @@ class TaskService:
 
     def _ensure_owner(self, task: Task, owner_id: int) -> None:
         if task.owner_id != owner_id:
-            # We raise TaskNotFoundError on HTTP Caller side to avoid reveal exising task for another user
-            # We raise TaskAccessDeniedError for traceability in logs
+            # The HTTP layer raises TaskNotFoundError
+            # to avoid reveal existing task for another user
+
+            # TaskAccessDeniedError is raised internally for logging purposes.
             raise TaskAccessDeniedError("Task does not belong to this user")
 
     def complete_task(self, task_id: int, owner_id: int) -> Task:

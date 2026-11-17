@@ -1,6 +1,7 @@
 async def test_register_via_api_creates_user(client):
 
-    # Arrange : Data we send via POST body request through dict, httpx auto convert into JSON
+    # Arrange : Data we send via POST body request through dict
+    # httpx auto convert into JSON
 
     payload = {
         "email": "api-test@example.com",
@@ -23,12 +24,14 @@ async def test_register_via_api_creates_user(client):
     assert data["is_active"] is True
     assert "id" in data
 
-    # Never check that pwd or hashed pwd is on response, UserOut schema doesn't have pwd field to avoid sensitive data leak
+    # Never check that pwd or hashed pwd is on response
+    # UserOut schema doesn't have pwd field to avoid sensitive data leak
 
 
 async def test_login_returns_access_token(client):
 
-    # Arrange : We need existing user from DB to login so we create it via true HTTP request no via authservice
+    # Arrange : We need existing user from DB to login
+    # so we create it via true HTTP request no via authservice
 
     register_payload = {
         "email": "login-test@example.com",
