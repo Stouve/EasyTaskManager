@@ -1,25 +1,29 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
-from app.core.user import User, RoleEnum
+from app.core.user import RoleEnum, User
 from app.infrastructure.database import get_db
 from app.infrastructure.user_repository import UserRepository
-from app.security.jwt_handler import decode_token, TokenType, InvalidTokenException
+from app.security.jwt_handler import InvalidTokenException, TokenType, decode_token
 
-security=HTTPBearer()
+security = HTTPBearer()
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security),
-                     db: Session = Depends(get_db),) -> User:
-    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                                          detail="Could not validate credentials",
-                                          headers={"WWW-Authenticate": "Bearer"},
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db),
+) -> User:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
-    token=credentials.credentials
+    token = credentials.credentials
 
     try:
-        payload=decode_token(token,expected_type=TokenType.ACCESS)
+        payload = decode_token(token, expected_type=TokenType.ACCESS)
     except InvalidTokenException:
         raise credentials_exception
 
@@ -27,12 +31,13 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     if user_id is None:
         raise credentials_exception
 
-    repo= UserRepository(db)
+    repo = UserRepository(db)
     user = repo.get_by_id(int(user_id))
 
     if user is None or not user.is_active:
         raise credentials_exception
     return user
+
 
 def require_role(required_role: RoleEnum):
     """
@@ -41,13 +46,13 @@ def require_role(required_role: RoleEnum):
 
     Usage : @router.get(..., dependencies=[Depends(require_role(RoleEnum.ADMIN))])
     """
+
     def _check_role(current_user: User = Depends(get_current_user)) -> User:
-        if current_user.role !=required_role:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                                detail="Insufficient permissions",
-                                )
+        if current_user.role != required_role:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions",
+            )
         return current_user
+
     return _check_role
-
-
-

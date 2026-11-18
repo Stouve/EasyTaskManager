@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - "features/**"
+  pull_request:
+    branches: [master]
+
+jobs:
+  quality:
+    name: Code quality and tests
+    runs-on: ubuntu-latest
+
+    env:
+      JWT_SECRET_KEY: "test-only-secret-key-for-ci"
+      JWT_ALGORITHM: "HS256"
+      ACCESS_TOKEN_EXPIRE_MINUTES: "15"
+      REFRESH_TOKEN_EXPIRE_DAYS: "7"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install dependencies
+        run: poetry install --with dev --no-interaction
+
+      - name: Run Ruff lint
+        run: poetry run ruff check .
+
+      - name: Show Ruff version
+        run: |
+          poetry run ruff --version
+          poetry show ruff
+
+      - name: Check formatting
+        run: poetry run ruff format --check .
+
+      - name: Run tests
+        run: poetry run pytest -v

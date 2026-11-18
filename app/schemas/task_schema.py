@@ -1,18 +1,18 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
 
 from app.core.task import TaskStatus
 
 
-#For DATA IN (POST/PUT)
+# For DATA IN (POST/PUT)
 class TaskCreate(BaseModel):
-    title:str
+    title: str
     description: Optional[str] = None
 
 
-#For DATA OUT (GET)
+# For DATA OUT (GET)
 class TaskOut(BaseModel):
     id: int
     title: str
@@ -22,11 +22,12 @@ class TaskOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class TaskUpdate(BaseModel):
     title: str
     description: Optional[str] = None
 
+
 class TaskPatch(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-
